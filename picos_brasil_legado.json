@@ -1,0 +1,582 @@
+{
+  "metadata": {
+    "data_coleta": "2026-08-17T16:18:25.176828",
+    "total_elevacoes": 42,
+    "sources": [
+      "IBGE",
+      "Complementar"
+    ],
+    "filtro_minimo": "300m de altitude"
+  },
+  "elevacoes": [
+    {
+      "nome": "Pico da Neblina",
+      "altitude": 2995.3,
+      "lat": 0.80472,
+      "lon": -66.00667,
+      "estado": "AM",
+      "municipios": [
+        "São Gabriel da Cachoeira"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE",
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Pico 31 de Março",
+      "altitude": 2974.18,
+      "lat": 0.8,
+      "lon": -66.0,
+      "estado": "AM",
+      "municipios": [
+        "São Gabriel da Cachoeira"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico da Bandeira",
+      "altitude": 2892,
+      "lat": -20.33333,
+      "lon": -41.83333,
+      "estado": "MG",
+      "municipios": [
+        "Caparaó"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE",
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Pico do Cruzeiro",
+      "altitude": 2852,
+      "lat": -20.32,
+      "lon": -41.84,
+      "estado": "MG",
+      "municipios": [
+        "Caparaó"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico do Calçado",
+      "altitude": 2849,
+      "lat": -20.3,
+      "lon": -41.85,
+      "estado": "MG",
+      "municipios": [
+        "Caparaó"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico do Calçado-Mirim",
+      "altitude": 2818,
+      "lat": -20.31,
+      "lon": -41.86,
+      "estado": "MG",
+      "municipios": [
+        "Caparaó"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pedra da Mina",
+      "altitude": 2798.4,
+      "lat": -22.38333,
+      "lon": -45.46667,
+      "estado": "SP",
+      "municipios": [
+        "Piquete"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE",
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Pico das Agulhas Negras",
+      "altitude": 2791.5,
+      "lat": -22.38,
+      "lon": -44.66167,
+      "estado": "RJ",
+      "municipios": [
+        "Resende"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico do Cristal",
+      "altitude": 2769.8,
+      "lat": -20.35,
+      "lon": -41.8,
+      "estado": "MG",
+      "municipios": [
+        "Caparaó"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Monte Roraima",
+      "altitude": 2734.1,
+      "lat": 5.15,
+      "lon": -60.75,
+      "estado": "RR",
+      "municipios": [
+        "Rorainópolis"
+      ],
+      "tipo": "monte",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pedra do Sino",
+      "altitude": 2690,
+      "lat": -22.4,
+      "lon": -44.8,
+      "estado": "RJ",
+      "municipios": [],
+      "tipo": "pedra",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Morro do Couto",
+      "altitude": 2680,
+      "lat": -22.39,
+      "lon": -44.68,
+      "estado": "RJ",
+      "municipios": [
+        "Itatiaia"
+      ],
+      "tipo": "morro",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pedra Alta",
+      "altitude": 2665,
+      "lat": -22.40611,
+      "lon": -44.80944,
+      "estado": "RJ",
+      "municipios": [
+        "Itatiaia"
+      ],
+      "tipo": "pedra",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico dos Três Estados",
+      "altitude": 2665,
+      "lat": -22.40611,
+      "lon": -44.80944,
+      "estado": "SP",
+      "municipios": [
+        "Queluz"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Asa de Hermes",
+      "altitude": 2630,
+      "lat": -22.35,
+      "lon": -44.65,
+      "estado": "RJ",
+      "municipios": [
+        "Itatiaia"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Morro do Massena",
+      "altitude": 2609,
+      "lat": -22.36,
+      "lon": -44.66,
+      "estado": "RJ",
+      "municipios": [
+        "Itatiaia"
+      ],
+      "tipo": "morro",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico da Pedra Roxa",
+      "altitude": 2600,
+      "lat": -20.5,
+      "lon": -42.0,
+      "estado": "MG",
+      "municipios": [
+        "Ouro Preto"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pedra Furada",
+      "altitude": 2589,
+      "lat": -22.37,
+      "lon": -44.67,
+      "estado": "RJ",
+      "municipios": [
+        "Itatiaia"
+      ],
+      "tipo": "pedra",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pedra do Altar",
+      "altitude": 2560,
+      "lat": -22.39,
+      "lon": -44.69,
+      "estado": "RJ",
+      "municipios": [],
+      "tipo": "pedra",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Prateleiras",
+      "altitude": 2548,
+      "lat": -22.385,
+      "lon": -44.685,
+      "estado": "RJ",
+      "municipios": [
+        "Itatiaia"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico das Prateleiras",
+      "altitude": 2548,
+      "lat": -22.385,
+      "lon": -44.685,
+      "estado": "RJ",
+      "municipios": [],
+      "tipo": "pico",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Pedra Assentada",
+      "altitude": 2453,
+      "lat": -22.395,
+      "lon": -44.69,
+      "estado": "RJ",
+      "municipios": [
+        "Itatiaia"
+      ],
+      "tipo": "pedra",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico dos Marins",
+      "altitude": 2420.7,
+      "lat": -22.5025,
+      "lon": -45.12111,
+      "estado": "SP",
+      "municipios": [
+        "Piquete",
+        "Cruzeiro"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico de Lençol",
+      "altitude": 2380,
+      "lat": -20.28,
+      "lon": -41.8,
+      "estado": "MG",
+      "municipios": [],
+      "tipo": "pico",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Pico do Tesouro",
+      "altitude": 2200,
+      "lat": -20.45,
+      "lon": -41.9,
+      "estado": "MG",
+      "municipios": [
+        "Caparaó"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico do Papagaio",
+      "altitude": 2105,
+      "lat": -22.15,
+      "lon": -45.0,
+      "estado": "MG",
+      "municipios": [
+        "Aiuruoca"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Morumbeba",
+      "altitude": 1900,
+      "lat": -19.9,
+      "lon": -43.85,
+      "estado": "MG",
+      "municipios": [
+        "Belo Horizonte"
+      ],
+      "tipo": "morro",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico dos Marombas",
+      "altitude": 1882,
+      "lat": -28.7,
+      "lon": -49.4,
+      "estado": "SC",
+      "municipios": [],
+      "tipo": "pico",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Morro da Igreja",
+      "altitude": 1822,
+      "lat": -28.76667,
+      "lon": -49.45,
+      "estado": "SC",
+      "municipios": [],
+      "tipo": "morro",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Pico do Ibitipoca",
+      "altitude": 1784,
+      "lat": -21.75,
+      "lon": -43.88333,
+      "estado": "MG",
+      "municipios": [
+        "Lima Duarte"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico da Itabira",
+      "altitude": 1585,
+      "lat": -19.65,
+      "lon": -43.23333,
+      "estado": "MG",
+      "municipios": [
+        "Itabira"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Morro Ermo",
+      "altitude": 1550,
+      "lat": -28.45,
+      "lon": -49.6,
+      "estado": "SC",
+      "municipios": [],
+      "tipo": "morro",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Cachoeira da Neblina",
+      "altitude": 1500,
+      "lat": 0.5,
+      "lon": -65.0,
+      "estado": "AM",
+      "municipios": [],
+      "tipo": "cachoeira",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Pico da Carapina",
+      "altitude": 1400,
+      "lat": -20.75,
+      "lon": -42.5,
+      "estado": "MG",
+      "municipios": [
+        "Caratinga"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico do Roncador",
+      "altitude": 1341,
+      "lat": -15.583,
+      "lon": -48.117,
+      "estado": "DF",
+      "municipios": [
+        "Brazlândia"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE",
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Pico do Jaraguá",
+      "altitude": 1135,
+      "lat": -23.45833,
+      "lon": -46.76528,
+      "estado": "SP",
+      "municipios": [
+        "São Paulo"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico Alto",
+      "altitude": 1114,
+      "lat": -4.20833,
+      "lon": -38.97472,
+      "estado": "CE",
+      "municipios": [
+        "Guaramiranga"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico da Tijuca",
+      "altitude": 1022,
+      "lat": -22.94361,
+      "lon": -43.28639,
+      "estado": "RJ",
+      "municipios": [
+        "Rio de Janeiro"
+      ],
+      "tipo": "pico",
+      "fontes": [
+        "IBGE"
+      ]
+    },
+    {
+      "nome": "Pico da Bandeira (RN)",
+      "altitude": 834,
+      "lat": -6.95,
+      "lon": -37.21667,
+      "estado": "RN",
+      "municipios": [],
+      "tipo": "pico",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Serra da Bodoquena",
+      "altitude": 730,
+      "lat": -20.5,
+      "lon": -56.36667,
+      "estado": "MS",
+      "municipios": [],
+      "tipo": "serra",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Morro de São Bento",
+      "altitude": 610,
+      "lat": -7.23333,
+      "lon": -34.88333,
+      "estado": "CE",
+      "municipios": [],
+      "tipo": "morro",
+      "fontes": [
+        "Complementar"
+      ]
+    },
+    {
+      "nome": "Pico do Cabugi",
+      "altitude": 575,
+      "lat": -5.16667,
+      "lon": -35.4,
+      "estado": "RN",
+      "municipios": [],
+      "tipo": "pico",
+      "fontes": [
+        "Complementar"
+      ]
+    }
+  ]
+}

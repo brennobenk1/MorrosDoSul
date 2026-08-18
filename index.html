@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acima de 300 — morros do Sul para acampar</title>
+<meta name="description" content="Catálogo aberto de elevações acima de 300 metros no Paraná, Santa Catarina e Rio Grande do Sul, com informação de trilha, água e acampamento.">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ACIMA DE 300 — sistema visual
+   Chão de basalto, tinta osso, rampa hipsométrica de carta topográfica:
+   musgo → erva → palha → ferrugem → geada (o branco do alto da serra)
+   ============================================================ */
+:root{
+  --basalto:#141C1A;
+  --basalto-2:#1A2422;
+  --basalto-3:#212D29;
+  --linha:rgba(236,231,219,.13);
+  --linha-forte:rgba(236,231,219,.26);
+  --osso:#ECE7DB;
+  --osso-2:#A8B3AC;
+  --osso-3:#75817B;
+
+  --h1:#4E7D55;   /* 300–600   */
+  --h2:#7E9A44;   /* 600–1000  */
+  --h3:#C9A03F;   /* 1000–1400 */
+  --h4:#C4693C;   /* 1400–1700 */
+  --h5:#E4DCC6;   /* 1700+     */
+  --ambar:#D9A441;
+
+  --display:"Bricolage Grotesque",system-ui,sans-serif;
+  --corpo:"IBM Plex Sans",system-ui,sans-serif;
+  --dado:"IBM Plex Mono",ui-monospace,monospace;
+
+  --raio:3px;
+  --max:1500px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--basalto);
+  color:var(--osso);
+  font-family:var(--corpo);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ambar);outline-offset:2px}
+
+.env{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,3vw,40px)}
+
+/* ---------- topo ---------- */
+.cabeca{
+  border-bottom:1px solid var(--linha);
+  padding-block:clamp(28px,5vw,56px) 0;
+  position:relative;
+  overflow:hidden;
+}
+/* curvas de nível ao fundo do cabeçalho */
+.curvas{
+  position:absolute;inset:0;
+  opacity:.5;
+  pointer-events:none;
+  mask-image:linear-gradient(to bottom,#000 0%,transparent 78%);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,transparent 78%);
+}
+.marca{
+  display:flex;align-items:baseline;gap:10px;
+  font-family:var(--dado);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--osso-3);
+  position:relative;z-index:1;
+}
+.marca b{color:var(--ambar);font-weight:600}
+.titulo{
+  font-family:var(--display);
+  font-weight:800;
+  font-size:clamp(2.5rem,7.4vw,5.6rem);
+  line-height:.9;
+  letter-spacing:-.035em;
+  margin:clamp(16px,3vw,28px) 0 0;
+  max-width:15ch;
+  position:relative;z-index:1;
+}
+.titulo em{font-style:normal;color:var(--ambar)}
+.linha-fina{
+  margin-top:20px;max-width:56ch;color:var(--osso-2);
+  font-size:clamp(15px,1.5vw,17px);
+  position:relative;z-index:1;
+}
+.leitura{
+  display:flex;flex-wrap:wrap;gap:0;
+  margin-top:clamp(28px,4vw,44px);
+  border-top:1px solid var(--linha);
+  position:relative;z-index:1;
+}
+.leitura div{
+  padding:14px 22px 16px 0;margin-right:22px;
+  border-right:1px solid var(--linha);
+}
+.leitura div:last-child{border-right:none}
+.leitura .n{font-family:var(--dado);font-size:22px;font-weight:500;letter-spacing:-.02em}
+.leitura .r{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3);font-family:var(--dado)}
+
+/* escala hipsométrica */
+.escala{display:flex;gap:1px;margin-top:22px;position:relative;z-index:1}
+.escala span{
+  flex:1;height:5px;
+  font-family:var(--dado);font-size:10px;
+}
+.escala i{display:block;height:5px}
+.escala u{
+  display:block;text-decoration:none;padding-top:6px;
+  color:var(--osso-3);font-style:normal;letter-spacing:.04em;
+}
+
+/* ---------- barra de filtros ---------- */
+.barra{
+  position:sticky;top:0;z-index:600;
+  background:rgba(20,28,26,.93);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--linha);
+}
+.barra-in{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding-block:12px;
+}
+.busca{
+  display:flex;align-items:center;gap:8px;
+  background:var(--basalto-2);border:1px solid var(--linha);
+  border-radius:var(--raio);padding:0 10px;min-width:200px;flex:1 1 200px;max-width:300px;
+}
+.busca input{background:none;border:none;padding:9px 0;width:100%;font-size:14px}
+.busca input::placeholder{color:var(--osso-3)}
+.busca svg{flex:none;opacity:.5}
+
+.grupo{display:flex;gap:4px;align-items:center}
+.rotulo{
+  font-family:var(--dado);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--osso-3);margin-right:2px;
+}
+.chip{
+  padding:7px 11px;border:1px solid var(--linha);border-radius:var(--raio);
+  font-family:var(--dado);font-size:12px;letter-spacing:.02em;
+  color:var(--osso-2);transition:.15s;white-space:nowrap;
+}
+.chip:hover{border-color:var(--linha-forte);color:var(--osso)}
+.chip[aria-pressed="true"]{background:var(--osso);color:var(--basalto);border-color:var(--osso);font-weight:600}
+select.chip{padding-right:22px;cursor:pointer;appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--osso-3) 50%),linear-gradient(135deg,var(--osso-3) 50%,transparent 50%);
+  background-position:calc(100% - 12px) 13px,calc(100% - 8px) 13px;
+  background-size:4px 4px,4px 4px;background-repeat:no-repeat}
+select.chip option{background:var(--basalto-2);color:var(--osso)}
+.limpar{font-family:var(--dado);font-size:12px;color:var(--osso-3);text-decoration:underline;text-underline-offset:3px;padding:7px 4px}
+.limpar:hover{color:var(--ambar)}
+
+/* ---------- corpo ---------- */
+.corpo{
+  display:grid;
+  grid-template-columns:96px minmax(330px,1fr) 1.05fr;
+  gap:clamp(16px,2vw,28px);
+  padding-block:clamp(18px,3vw,32px) 60px;
+  align-items:start;
+}
+
+/* ---------- assinatura: perfil do acervo ---------- */
+.perfil{
+  position:sticky;top:74px;
+  height:calc(100vh - 110px);min-height:440px;
+  display:flex;flex-direction:column;
+}
+.perfil-cab{font-family:var(--dado);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3);margin-bottom:10px}
+.trilho{
+  position:relative;flex:1;
+  border-left:1px solid var(--linha);
+  border-right:1px solid var(--linha);
+  touch-action:none;
+  cursor:crosshair;
+}
+.faixa{position:absolute;left:0;right:0}
+.faixa i{position:absolute;inset:0;opacity:.13}
+.grade{position:absolute;left:0;right:0;height:0;border-top:1px dashed var(--linha)}
+.grade b{
+  position:absolute;left:2px;top:-14px;
+  font-family:var(--dado);font-size:9px;color:var(--osso-3);font-weight:400;letter-spacing:.04em;
+}
+.ponto{
+  position:absolute;width:7px;height:7px;border-radius:50%;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(20,28,26,.85);
+  transition:transform .18s,opacity .18s;
+  cursor:pointer;
+}
+.ponto:hover{transform:translate(-50%,-50%) scale(1.9);z-index:5}
+.ponto.fora{opacity:.14}
+.ponto.sel{transform:translate(-50%,-50%) scale(2.3);box-shadow:0 0 0 3px rgba(217,164,65,.35);z-index:6}
+.veu{position:absolute;left:0;right:0;background:rgba(20,28,26,.78);pointer-events:none}
+.puxador{
+  position:absolute;left:-6px;right:-6px;height:2px;background:var(--ambar);
+  cursor:ns-resize;touch-action:none;
+}
+.puxador::after{
+  content:attr(data-v);position:absolute;right:0;top:3px;
+  font-family:var(--dado);font-size:10px;color:var(--ambar);
+  background:var(--basalto);padding:0 3px;letter-spacing:.02em;
+}
+.puxador.baixo::after{top:-17px}
+.puxador::before{
+  content:"";position:absolute;left:0;right:0;top:-9px;height:20px;
+}
+.perfil-eixo{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;font-family:var(--dado);font-size:9.5px;color:var(--osso-3);letter-spacing:.1em;margin-bottom:6px}
+
+/* ---------- lista ---------- */
+.lista-cab{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--dado);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--osso-3);margin-bottom:10px;
+}
+.lista{display:flex;flex-direction:column;gap:1px}
+
+.ficha{
+  background:var(--basalto-2);
+  border:1px solid transparent;
+  border-radius:var(--raio);
+  transition:background .15s;
+}
+.ficha:hover{background:var(--basalto-3)}
+.ficha.aberta{background:var(--basalto-3);border-color:var(--linha)}
+.ficha-topo{
+  display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+  width:100%;padding:13px 15px;text-align:left;
+}
+.cota{
+  font-family:var(--dado);font-size:19px;font-weight:500;letter-spacing:-.03em;
+  min-width:62px;position:relative;padding-left:11px;
+}
+.cota::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:3px;border-radius:2px;background:var(--cor)}
+.cota small{font-size:10px;color:var(--osso-3);font-weight:400;letter-spacing:0}
+.ficha h3{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.ficha .onde{font-size:12.5px;color:var(--osso-3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ficha-topo>div:nth-child(2){min-width:0}
+.selos{display:flex;gap:5px;align-items:center;flex:none}
+.selo{
+  font-family:var(--dado);font-size:10px;letter-spacing:.04em;
+  padding:3px 6px;border:1px solid var(--linha);border-radius:2px;color:var(--osso-2);
+  white-space:nowrap;
+}
+.selo.dorme{border-color:rgba(217,164,65,.5);color:var(--ambar)}
+.selo.nao{border-color:rgba(196,105,60,.45);color:#D08A66}
+.grau{display:flex;gap:2px;align-items:center}
+.grau i{width:4px;height:11px;background:rgba(236,231,219,.16);border-radius:1px}
+.grau i.on{background:var(--osso)}
+
+.detalhe{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease}
+.ficha.aberta .detalhe{grid-template-rows:1fr}
+.detalhe-in{overflow:hidden}
+.detalhe-corpo{padding:0 15px 16px;border-top:1px solid var(--linha);margin-top:2px;padding-top:14px}
+.nota{font-size:14px;color:var(--osso-2);max-width:62ch}
+.dados{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));
+  gap:1px;background:var(--linha);border:1px solid var(--linha);
+  margin:14px 0;border-radius:var(--raio);overflow:hidden;
+}
+.dados div{background:var(--basalto-2);padding:9px 10px}
+.dados dt{font-family:var(--dado);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3)}
+.dados dd{font-family:var(--dado);font-size:14px;margin-top:3px}
+.acesso{font-size:13.5px;color:var(--osso-2);display:flex;gap:9px;margin-top:9px}
+.acesso b{font-family:var(--dado);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3);flex:none;width:58px;padding-top:3px}
+.acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.acao{
+  font-family:var(--dado);font-size:11.5px;letter-spacing:.03em;
+  padding:7px 10px;border:1px solid var(--linha);border-radius:var(--raio);
+  color:var(--osso-2);text-decoration:none;display:inline-flex;gap:6px;align-items:center;transition:.15s;
+}
+.acao:hover{border-color:var(--ambar);color:var(--ambar)}
+.aviso-conf{
+  font-family:var(--dado);font-size:10.5px;color:#D08A66;margin-top:12px;
+  display:flex;gap:7px;align-items:flex-start;
+}
+
+.vazio{padding:60px 20px;text-align:center;color:var(--osso-3)}
+.vazio p{font-family:var(--display);font-size:20px;color:var(--osso-2);margin-bottom:6px}
+
+/* ---------- mapa ---------- */
+.painel-mapa{position:sticky;top:74px}
+.mapa-cab{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.mapa-cab span{font-family:var(--dado);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3)}
+.camadas{display:flex;gap:4px}
+#mapa{
+  height:calc(100vh - 130px);min-height:440px;
+  border:1px solid var(--linha);border-radius:var(--raio);
+  background:var(--basalto-2);
+}
+.leaflet-container{background:var(--basalto-2);font-family:var(--corpo)}
+.leaflet-popup-content-wrapper{
+  background:var(--basalto-3);color:var(--osso);border-radius:var(--raio);
+  border:1px solid var(--linha-forte);box-shadow:0 12px 30px rgba(0,0,0,.5);
+}
+.leaflet-popup-tip{background:var(--basalto-3);border:1px solid var(--linha-forte)}
+.leaflet-popup-content{margin:12px 14px;font-size:13px}
+.leaflet-popup-close-button{color:var(--osso-3)!important}
+.pop-cota{font-family:var(--dado);font-size:12px;color:var(--ambar);letter-spacing:.04em}
+.pop-nome{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-.02em;margin:2px 0 3px}
+.pop-onde{color:var(--osso-3);font-size:12px}
+.pop-ver{font-family:var(--dado);font-size:11px;margin-top:8px;color:var(--ambar);text-decoration:underline;text-underline-offset:3px}
+.leaflet-control-attribution{background:rgba(20,28,26,.8)!important;color:var(--osso-3)!important;font-size:9px!important}
+.leaflet-control-attribution a{color:var(--osso-2)!important}
+.leaflet-control-zoom a{background:var(--basalto-2)!important;color:var(--osso)!important;border-color:var(--linha)!important}
+
+/* ---------- rodapé ---------- */
+.pe{border-top:1px solid var(--linha);padding-block:36px 60px;color:var(--osso-3);font-size:13px}
+.pe-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:28px}
+.pe h4{font-family:var(--dado);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--osso-2);margin-bottom:8px;font-weight:500}
+.pe p{max-width:44ch}
+.pe ul{list-style:none;font-family:var(--dado);font-size:12px;line-height:1.9}
+.pe .prox li::before{content:"→ ";color:var(--ambar)}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+  background:var(--osso);color:var(--basalto);padding:9px 16px;border-radius:var(--raio);
+  font-family:var(--dado);font-size:12px;opacity:0;pointer-events:none;transition:.22s;z-index:900;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- responsivo ---------- */
+@media(max-width:1080px){
+  .corpo{grid-template-columns:76px 1fr;grid-template-areas:"mapa mapa" "perfil lista"}
+  .painel-mapa{grid-area:mapa;position:static}
+  #mapa{height:320px;min-height:0}
+  .perfil{grid-area:perfil;position:sticky;top:120px;height:calc(100vh - 160px)}
+  .lista-area{grid-area:lista}
+}
+@media(max-width:760px){
+  .barra-in{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:8px}
+  .barra-in::-webkit-scrollbar{display:none}
+  .rotulo{display:none}
+  .busca{flex:0 0 168px;min-width:0}
+  .grupo{flex:none}
+  .limpar{flex:none}
+}
+@media(max-width:1080px){
+  .perfil{top:64px;height:calc(100vh - 100px)}
+}
+@media(max-width:620px){
+  .corpo{grid-template-columns:58px 1fr;gap:12px}
+  .ficha-topo{grid-template-columns:auto 1fr;gap:10px;padding:12px}
+  .selos{grid-column:1/-1;flex-wrap:wrap}
+  .leitura div{padding-right:16px;margin-right:16px}
+  .escala u{font-size:9px}
+  .titulo{font-size:clamp(2.1rem,10vw,3rem)}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+
+/* entrada suave das fichas */
+@keyframes sobe{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ficha{animation:sobe .3s backwards}
+</style>
+</head>
+<body>
+
+<header class="cabeca">
+  <svg class="curvas" preserveAspectRatio="none" viewBox="0 0 1200 300" aria-hidden="true">
+    <g fill="none" stroke="rgba(236,231,219,0.09)" stroke-width="1">
+      <path d="M-20,262 C180,238 300,278 460,246 C620,214 760,258 920,232 C1040,212 1140,236 1220,222"/>
+      <path d="M-20,238 C190,210 310,254 470,218 C630,182 770,232 930,202 C1050,180 1150,208 1220,194"/>
+      <path d="M-20,212 C200,180 320,228 480,188 C640,148 780,204 940,170 C1060,146 1160,178 1220,164"/>
+      <path d="M-20,184 C210,148 330,200 490,156 C650,112 790,174 950,136 C1070,110 1170,146 1220,132"/>
+      <path d="M-20,154 C220,114 340,170 500,122 C660,74 800,142 960,100 C1080,72 1180,112 1220,98"/>
+      <path d="M-20,122 C230,78 350,138 510,86 C670,34 810,108 970,62 C1090,32 1190,76 1220,62"/>
+    </g>
+  </svg>
+
+  <div class="env">
+    <div class="marca"><b>ACIMA DE 300</b><span>Catálogo aberto · Paraná · Santa Catarina · Rio Grande do Sul</span></div>
+    <h1 class="titulo">Onde armar barraca acima dos <em>300&nbsp;metros</em></h1>
+    <p class="linha-fina">Cada morro aqui traz o que muda a viagem: quanto sobe, quanto anda, se tem água no caminho e se dá para dormir no alto. Começamos pelos três estados do Sul.</p>
+
+    <div class="leitura">
+      <div><div class="n" id="n-total">—</div><div class="r">no catálogo</div></div>
+      <div><div class="n" id="n-alto">—</div><div class="r">cume mais alto</div></div>
+      <div><div class="n" id="n-dorme">—</div><div class="r">com pernoite no alto</div></div>
+      <div><div class="n" id="n-verificar">—</div><div class="r">a confirmar em campo</div></div>
+    </div>
+
+    <div class="escala" id="escala" aria-hidden="true"></div>
+    <div style="height:clamp(24px,4vw,44px)"></div>
+  </div>
+</header>
+
+<nav class="barra">
+  <div class="env barra-in">
+    <label class="busca">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg>
+      <input type="search" id="busca" placeholder="Buscar morro ou município" aria-label="Buscar morro ou município">
+    </label>
+
+    <div class="grupo" role="group" aria-label="Estado">
+      <span class="rotulo">UF</span>
+      <button class="chip" data-uf="PR" aria-pressed="false">PR</button>
+      <button class="chip" data-uf="SC" aria-pressed="false">SC</button>
+      <button class="chip" data-uf="RS" aria-pressed="false">RS</button>
+    </div>
+
+    <div class="grupo" role="group" aria-label="Acampamento">
+      <span class="rotulo">Barraca</span>
+      <button class="chip" data-acamp="alto" aria-pressed="false">Dorme no alto</button>
+      <button class="chip" data-acamp="qualquer" aria-pressed="false">Dorme perto</button>
+    </div>
+
+    <div class="grupo">
+      <span class="rotulo">Nível até</span>
+      <select class="chip" id="grau" aria-label="Dificuldade máxima">
+        <option value="5">qualquer</option>
+        <option value="1">1 · leve</option>
+        <option value="2">2 · moderada</option>
+        <option value="3">3 · puxada</option>
+        <option value="4">4 · difícil</option>
+      </select>
+    </div>
+
+    <div class="grupo">
+      <span class="rotulo">Ordem</span>
+      <select class="chip" id="ordem" aria-label="Ordenar por">
+        <option value="alt-desc">mais alto</option>
+        <option value="alt-asc">mais baixo</option>
+        <option value="grau-asc">mais fácil</option>
+        <option value="nome">A–Z</option>
+      </select>
+    </div>
+
+    <button class="limpar" id="limpar">limpar</button>
+  </div>
+</nav>
+
+<main class="env corpo">
+
+  <!-- assinatura: perfil de altitude do acervo, que também filtra -->
+  <section class="perfil" aria-label="Filtro de altitude">
+    <div class="perfil-cab">Perfil<br>do acervo</div>
+    <div class="perfil-eixo"><span>PR</span><span>SC</span><span>RS</span></div>
+    <div class="trilho" id="trilho">
+      <div class="veu" id="veu-alto"></div>
+      <div class="veu" id="veu-baixo"></div>
+      <div class="puxador" id="pux-alto" data-v="" role="slider" aria-label="Altitude máxima" tabindex="0"></div>
+      <div class="puxador baixo" id="pux-baixo" data-v="" role="slider" aria-label="Altitude mínima" tabindex="0"></div>
+    </div>
+  </section>
+
+  <section class="lista-area">
+    <div class="lista-cab">
+      <span id="contagem">—</span>
+      <span id="faixa-txt"></span>
+    </div>
+    <div class="lista" id="lista"></div>
+  </section>
+
+  <section class="painel-mapa">
+    <div class="mapa-cab">
+      <span>Mapa</span>
+      <div class="camadas">
+        <button class="chip" data-camada="topo" aria-pressed="true">topográfico</button>
+        <button class="chip" data-camada="sat" aria-pressed="false">satélite</button>
+      </div>
+    </div>
+    <div id="mapa"></div>
+  </section>
+</main>
+
+<footer class="pe">
+  <div class="env pe-grade">
+    <div>
+      <h4>Como ler os dados</h4>
+      <p>Altitudes vêm de levantamentos cartográficos e de clubes de montanhismo, e variam de uma fonte para outra. Distância, tempo e desnível são estimativas de subida, não de ida e volta.</p>
+    </div>
+    <div>
+      <h4>Antes de subir</h4>
+      <p>Boa parte destes morros fica em propriedade particular ou em unidade de conservação. Confirme a entrada e a regra de pernoite com o parque, a prefeitura ou o dono da terra. Leve o lixo de volta.</p>
+    </div>
+    <div>
+      <h4>Fontes</h4>
+      <ul>
+        <li>IBGE · cartas topográficas</li>
+        <li>ICMBio e órgãos estaduais</li>
+        <li>Clubes e guias de montanhismo</li>
+        <li>OpenStreetMap · OpenTopoMap</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Próximos passos</h4>
+      <ul class="prox">
+        <li>Fotos e relatos de campo</li>
+        <li>Track GPX para baixar</li>
+        <li>Campings e apoio na base</li>
+        <li>São Paulo e Minas Gerais</li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="dados.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ---------------- dados ---------------- */
+var BASE = (window.MORROS_SUL && window.MORROS_SUL.morros) ? window.MORROS_SUL : {morros:[],metadata:{}};
+var TODOS = BASE.morros.slice();
+
+/* ---------------- escala hipsométrica ---------------- */
+var FAIXAS = [
+  {min:300,  max:600,  cor:"#4E7D55", rot:"300"},
+  {min:600,  max:1000, cor:"#7E9A44", rot:"600"},
+  {min:1000, max:1400, cor:"#C9A03F", rot:"1000"},
+  {min:1400, max:1700, cor:"#C4693C", rot:"1400"},
+  {min:1700, max:2000, cor:"#E4DCC6", rot:"1700"}
+];
+function cor(a){
+  for(var i=FAIXAS.length-1;i>=0;i--) if(a>=FAIXAS[i].min) return FAIXAS[i].cor;
+  return FAIXAS[0].cor;
+}
+
+var ESC_MIN = 200, ESC_MAX = 1950;
+function pct(alt){ return (1 - (alt-ESC_MIN)/(ESC_MAX-ESC_MIN)) * 100; }
+function altDePct(p){ return Math.round(ESC_MIN + (1-p/100)*(ESC_MAX-ESC_MIN)); }
+
+var GRAUS = ["","leve","moderada","puxada","difícil","técnica"];
+var ACAMP = {
+  cume:     {txt:"dorme no alto",   classe:"dorme", alto:true},
+  percurso: {txt:"acampa na trilha",classe:"dorme", alto:true},
+  base:     {txt:"dorme na base",   classe:"",      alto:false},
+  camping:  {txt:"camping na base", classe:"",      alto:false},
+  proibido: {txt:"sem pernoite",    classe:"nao",   alto:false},
+  verificar:{txt:"pernoite a confirmar",classe:"", alto:false}
+};
+var AGUA = {percurso:"no caminho", base:"só na base", sazonal:"sazonal", nenhuma:"leve a sua"};
+
+/* ---------------- estado ---------------- */
+var filtro = {texto:"", ufs:[], acamp:"", grau:5, min:300, max:1950, ordem:"alt-desc"};
+var visiveis = [], selecionado = null, marcas = {}, mapa, camadaTopo, camadaSat;
+
+var $ = function(s){ return document.querySelector(s); };
+var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+/* ---------------- cabeçalho ---------------- */
+function montaCabeca(){
+  $("#n-total").textContent = TODOS.length;
+  var alto = TODOS.reduce(function(a,b){ return b.altitude>a.altitude?b:a; }, TODOS[0]);
+  $("#n-alto").innerHTML = alto.altitude.toLocaleString("pt-BR") + ' <span style="font-size:12px;color:var(--osso-3)">m · ' + alto.nome + '</span>';
+  $("#n-dorme").textContent = TODOS.filter(function(m){ return ACAMP[m.acampamento].alto; }).length;
+  $("#n-verificar").textContent = TODOS.filter(function(m){ return m.acampamento==="verificar"; }).length;
+
+  $("#escala").innerHTML = FAIXAS.map(function(f,i){
+    var fim = i===FAIXAS.length-1 ? "m e acima" : "";
+    return '<span><i style="background:'+f.cor+'"></i><u>'+f.rot+(fim?" "+fim:"")+'</u></span>';
+  }).join("");
+}
+
+/* ---------------- perfil / régua ---------------- */
+var COL = {PR:18, SC:50, RS:82};
+function montaPerfil(){
+  var t = $("#trilho");
+  FAIXAS.forEach(function(f){
+    var d = document.createElement("div");
+    d.className = "faixa";
+    d.style.top = pct(Math.min(f.max,ESC_MAX)) + "%";
+    d.style.height = (pct(f.min) - pct(Math.min(f.max,ESC_MAX))) + "%";
+    d.innerHTML = '<i style="background:'+f.cor+'"></i>';
+    t.appendChild(d);
+  });
+  [500,1000,1500].forEach(function(v){
+    var g = document.createElement("div");
+    g.className = "grade";
+    g.style.top = pct(v) + "%";
+    g.innerHTML = "<b>"+v+"</b>";
+    t.appendChild(g);
+  });
+  TODOS.forEach(function(m){
+    var p = document.createElement("button");
+    p.className = "ponto";
+    p.dataset.id = m.id;
+    p.style.top = pct(m.altitude) + "%";
+    p.style.left = COL[m.estado] + "%";
+    p.style.background = cor(m.altitude);
+    p.title = m.nome + " · " + m.altitude + " m";
+    p.setAttribute("aria-label", m.nome + ", " + m.altitude + " metros");
+    p.addEventListener("click", function(){ abrir(m.id, true); });
+    t.appendChild(p);
+  });
+  t.appendChild($("#veu-alto"));
+  t.appendChild($("#veu-baixo"));
+  t.appendChild($("#pux-alto"));
+  t.appendChild($("#pux-baixo"));
+  desenhaPuxadores();
+  ligaArraste();
+}
+
+function desenhaPuxadores(){
+  var pa = pct(filtro.max), pb = pct(filtro.min);
+  $("#pux-alto").style.top = pa + "%";
+  $("#pux-baixo").style.top = pb + "%";
+  $("#pux-alto").dataset.v = filtro.max + " m";
+  $("#pux-baixo").dataset.v = filtro.min + " m";
+  $("#veu-alto").style.top = "0"; $("#veu-alto").style.height = pa + "%";
+  $("#veu-baixo").style.top = pb + "%"; $("#veu-baixo").style.bottom = "0";
+  $("#faixa-txt").textContent = filtro.min + "–" + filtro.max + " m";
+}
+
+function ligaArraste(){
+  var trilho = $("#trilho"), arrastando = null;
+  function mover(ev){
+    if(!arrastando) return;
+    var r = trilho.getBoundingClientRect();
+    var y = Math.min(Math.max(ev.clientY - r.top, 0), r.height);
+    var v = altDePct(y / r.height * 100);
+    v = Math.round(v/10)*10;
+    if(arrastando === "alto") filtro.max = Math.max(v, filtro.min + 50);
+    else filtro.min = Math.min(Math.max(v,ESC_MIN), filtro.max - 50);
+    desenhaPuxadores(); aplica();
+  }
+  ["pux-alto","pux-baixo"].forEach(function(id){
+    $("#"+id).addEventListener("pointerdown", function(e){
+      arrastando = id === "pux-alto" ? "alto" : "baixo";
+      e.target.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    $("#"+id).addEventListener("keydown", function(e){
+      var passo = e.shiftKey ? 100 : 25, d = 0;
+      if(e.key === "ArrowUp") d = passo; else if(e.key === "ArrowDown") d = -passo; else return;
+      e.preventDefault();
+      if(id === "pux-alto") filtro.max = Math.min(ESC_MAX, Math.max(filtro.min+50, filtro.max+d));
+      else filtro.min = Math.max(ESC_MIN, Math.min(filtro.max-50, filtro.min+d));
+      desenhaPuxadores(); aplica();
+    });
+  });
+  document.addEventListener("pointermove", mover);
+  document.addEventListener("pointerup", function(){ arrastando = null; });
+}
+
+/* ---------------- filtro ---------------- */
+function aplica(){
+  var t = filtro.texto.toLowerCase().trim();
+  visiveis = TODOS.filter(function(m){
+    if(m.altitude < filtro.min || m.altitude > filtro.max) return false;
+    if(filtro.ufs.length && filtro.ufs.indexOf(m.estado) < 0) return false;
+    if(m.dificuldade > filtro.grau) return false;
+    if(filtro.acamp === "alto" && !ACAMP[m.acampamento].alto) return false;
+    if(filtro.acamp === "qualquer" && m.acampamento === "proibido") return false;
+    if(t){
+      var alvo = (m.nome + " " + m.municipios.join(" ") + " " + m.regiao + " " + m.estado).toLowerCase();
+      if(alvo.indexOf(t) < 0) return false;
+    }
+    return true;
+  });
+
+  visiveis.sort(function(a,b){
+    switch(filtro.ordem){
+      case "alt-asc":  return a.altitude - b.altitude;
+      case "grau-asc": return a.dificuldade - b.dificuldade || b.altitude - a.altitude;
+      case "nome":     return a.nome.localeCompare(b.nome,"pt-BR");
+      default:         return b.altitude - a.altitude;
+    }
+  });
+
+  var ids = {};
+  visiveis.forEach(function(m){ ids[m.id] = 1; });
+  $$(".ponto").forEach(function(p){ p.classList.toggle("fora", !ids[p.dataset.id]); });
+
+  desenhaLista();
+  desenhaMarcas();
+  $("#contagem").textContent = visiveis.length + (visiveis.length === 1 ? " morro" : " morros");
+}
+
+/* ---------------- lista ---------------- */
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]; }); }
+
+function fichaHTML(m,i){
+  var a = ACAMP[m.acampamento];
+  var pontos = "";
+  for(var k=1;k<=5;k++) pontos += '<i class="'+(k<=m.dificuldade?"on":"")+'"></i>';
+  return '<article class="ficha" id="f-'+m.id+'" style="animation-delay:'+Math.min(i*14,220)+'ms">'
+    + '<button class="ficha-topo" aria-expanded="false" data-abre="'+m.id+'">'
+      + '<div class="cota" style="--cor:'+cor(m.altitude)+'">'+m.altitude+'<small> m</small></div>'
+      + '<div><h3>'+esc(m.nome)+'</h3><div class="onde">'+esc(m.municipios.join(", "))+' · '+m.estado+' · '+esc(m.regiao)+'</div></div>'
+      + '<div class="selos"><span class="selo '+a.classe+'">'+a.txt+'</span>'
+      + '<span class="grau" title="Nível '+m.dificuldade+' · '+GRAUS[m.dificuldade]+'">'+pontos+'</span></div>'
+    + '</button>'
+    + '<div class="detalhe"><div class="detalhe-in"><div class="detalhe-corpo">'
+      + '<p class="nota">'+esc(m.nota)+'</p>'
+      + '<dl class="dados">'
+        + '<div><dt>Nível</dt><dd>'+m.dificuldade+' · '+GRAUS[m.dificuldade]+'</dd></div>'
+        + '<div><dt>Subida</dt><dd>'+m.trilha_km+' km</dd></div>'
+        + '<div><dt>Tempo</dt><dd>~'+m.tempo_h+' h</dd></div>'
+        + '<div><dt>Desnível</dt><dd>'+m.ganho_m+' m</dd></div>'
+        + '<div><dt>Água</dt><dd>'+AGUA[m.agua]+'</dd></div>'
+      + '</dl>'
+      + '<div class="acesso"><b>Acesso</b><span>'+esc(m.acesso)+'</span></div>'
+      + '<div class="acesso"><b>Época</b><span>'+esc(m.epoca)+'</span></div>'
+      + '<div class="acesso"><b>Barraca</b><span>'+esc(a.txt.charAt(0).toUpperCase()+a.txt.slice(1))+'</span></div>'
+      + '<div class="acoes">'
+        + '<button class="acao" data-copia="'+m.lat.toFixed(5)+', '+m.lon.toFixed(5)+'">'+m.lat.toFixed(4)+', '+m.lon.toFixed(4)+' · copiar</button>'
+        + '<a class="acao" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+m.lat+','+m.lon+'">como chegar</a>'
+        + '<button class="acao" data-mapa="'+m.id+'">ver no mapa</button>'
+      + '</div>'
+      + (m.confianca === "media" ? '<div class="aviso-conf"><span>▲</span><span>Altitude e acesso ainda sem confirmação em campo. Cheque antes de fechar o roteiro.</span></div>' : '')
+    + '</div></div></div></article>';
+}
+
+function desenhaLista(){
+  var el = $("#lista");
+  if(!visiveis.length){
+    el.innerHTML = '<div class="vazio"><p>Nada nessa faixa.</p><span>Solte a régua de altitude ou tire um filtro.</span></div>';
+    return;
+  }
+  el.innerHTML = visiveis.map(fichaHTML).join("");
+  if(selecionado && document.getElementById("f-"+selecionado)) marcaAberta(selecionado);
+}
+
+function marcaAberta(id){
+  var f = document.getElementById("f-"+id);
+  if(!f) return;
+  f.classList.add("aberta");
+  f.querySelector(".ficha-topo").setAttribute("aria-expanded","true");
+}
+
+function abrir(id, rolar){
+  var jaAberto = selecionado === id;
+  $$(".ficha.aberta").forEach(function(f){
+    f.classList.remove("aberta");
+    f.querySelector(".ficha-topo").setAttribute("aria-expanded","false");
+  });
+  $$(".ponto.sel").forEach(function(p){ p.classList.remove("sel"); });
+
+  if(jaAberto && !rolar){ selecionado = null; return; }
+  selecionado = id;
+  marcaAberta(id);
+  var p = document.querySelector('.ponto[data-id="'+id+'"]');
+  if(p) p.classList.add("sel");
+
+  var m = TODOS.filter(function(x){ return x.id === id; })[0];
+  if(m && mapa){
+    mapa.flyTo([m.lat, m.lon], Math.max(mapa.getZoom(), 10), {duration:.7});
+    if(marcas[id]) marcas[id].openPopup();
+  }
+  if(rolar){
+    var f = document.getElementById("f-"+id);
+    if(f) f.scrollIntoView({block:"center", behavior:"smooth"});
+  }
+}
+
+/* ---------------- mapa ---------------- */
+function montaMapa(){
+  if(typeof L === "undefined"){
+    mapa = null;
+    $("#mapa").innerHTML = '<div class="vazio" style="height:100%;display:flex;flex-direction:column;justify-content:center">'
+      + '<p>Mapa fora do ar.</p><span>A biblioteca de mapas não carregou. A lista abaixo continua funcionando.</span></div>';
+    return;
+  }
+  mapa = L.map("mapa", {zoomControl:true, scrollWheelZoom:false}).setView([-27.5,-50.5], 6);
+  camadaTopo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
+    maxZoom:16, attribution:'© OpenStreetMap · SRTM · <a href="https://opentopomap.org">OpenTopoMap</a>'
+  }).addTo(mapa);
+  camadaSat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
+    maxZoom:17, attribution:"Imagens © Esri"
+  });
+  mapa.on("click", function(){ mapa.scrollWheelZoom.enable(); });
+  mapa.on("mouseout", function(){ mapa.scrollWheelZoom.disable(); });
+}
+
+function desenhaMarcas(){
+  if(!mapa) return;
+  Object.keys(marcas).forEach(function(k){ mapa.removeLayer(marcas[k]); });
+  marcas = {};
+  visiveis.forEach(function(m){
+    var mk = L.circleMarker([m.lat,m.lon],{
+      radius: 4 + (m.altitude/1900)*7,
+      fillColor: cor(m.altitude),
+      color: "#141C1A", weight: 1.5, opacity: 1, fillOpacity: .92
+    }).addTo(mapa);
+    mk.bindPopup(
+      '<div class="pop-cota">'+m.altitude+' m · nível '+m.dificuldade+'</div>'
+      + '<div class="pop-nome">'+esc(m.nome)+'</div>'
+      + '<div class="pop-onde">'+esc(m.municipios.join(", "))+' · '+m.estado+'</div>'
+      + '<div class="pop-ver">'+ACAMP[m.acampamento].txt+'</div>'
+    );
+    mk.on("click", function(){ abrir(m.id, true); });
+    marcas[m.id] = mk;
+  });
+}
+
+/* ---------------- eventos ---------------- */
+function toast(txt){
+  var t = $("#toast");
+  t.textContent = txt; t.classList.add("on");
+  clearTimeout(t._i); t._i = setTimeout(function(){ t.classList.remove("on"); }, 1600);
+}
+
+document.addEventListener("click", function(e){
+  var b;
+  if((b = e.target.closest("[data-abre]"))) { abrir(b.dataset.abre, false); return; }
+  if((b = e.target.closest("[data-copia]"))){
+    navigator.clipboard.writeText(b.dataset.copia).then(function(){ toast("Coordenadas copiadas"); },
+      function(){ toast("Não deu para copiar"); });
+    return;
+  }
+  if((b = e.target.closest("[data-mapa]"))){
+    document.querySelector(".painel-mapa").scrollIntoView({block:"center",behavior:"smooth"});
+    return;
+  }
+  if((b = e.target.closest("[data-uf]"))){
+    var uf = b.dataset.uf, i = filtro.ufs.indexOf(uf);
+    if(i < 0) filtro.ufs.push(uf); else filtro.ufs.splice(i,1);
+    b.setAttribute("aria-pressed", i < 0 ? "true" : "false");
+    aplica(); return;
+  }
+  if((b = e.target.closest("[data-acamp]"))){
+    var v = b.dataset.acamp;
+    filtro.acamp = filtro.acamp === v ? "" : v;
+    $$("[data-acamp]").forEach(function(x){ x.setAttribute("aria-pressed", x.dataset.acamp === filtro.acamp ? "true":"false"); });
+    aplica(); return;
+  }
+  if((b = e.target.closest("[data-camada]"))){
+    if(!mapa) return;
+    var sat = b.dataset.camada === "sat";
+    mapa.removeLayer(sat ? camadaTopo : camadaSat);
+    (sat ? camadaSat : camadaTopo).addTo(mapa);
+    $$("[data-camada]").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true":"false"); });
+    return;
+  }
+});
+
+$("#busca").addEventListener("input", function(e){ filtro.texto = e.target.value; aplica(); });
+$("#grau").addEventListener("change", function(e){ filtro.grau = +e.target.value; aplica(); });
+$("#ordem").addEventListener("change", function(e){ filtro.ordem = e.target.value; aplica(); });
+$("#limpar").addEventListener("click", function(){
+  filtro = {texto:"", ufs:[], acamp:"", grau:5, min:300, max:1950, ordem:"alt-desc"};
+  $("#busca").value = ""; $("#grau").value = "5"; $("#ordem").value = "alt-desc";
+  $$("[data-uf],[data-acamp]").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+  desenhaPuxadores(); aplica();
+});
+
+/* ---------------- início ---------------- */
+if(!TODOS.length){
+  $("#lista").innerHTML = '<div class="vazio"><p>Os dados não carregaram.</p><span>Confira se dados.js está na mesma pasta do index.html.</span></div>';
+} else {
+  montaCabeca();
+  montaPerfil();
+  montaMapa();
+  aplica();
+}
+})();
+</script>
+</body>
+</html>
