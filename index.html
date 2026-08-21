@@ -3,476 +3,336 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Acima de 300 — morros do Sul para acampar</title>
-<meta name="description" content="Catálogo aberto de elevações acima de 300 metros no Paraná, Santa Catarina e Rio Grande do Sul, com informação de trilha, água e acampamento.">
+<title>Dorme no Alto — morros do Sul para acampar</title>
+<meta name="description" content="Onde armar barraca no Paraná, Santa Catarina e Rio Grande do Sul. Quanto sobe, quanto anda, se tem água e se dá para dormir lá em cima.">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ============================================================
-   ACIMA DE 300 — sistema visual
-   Chão de basalto, tinta osso, rampa hipsométrica de carta topográfica:
-   musgo → erva → palha → ferrugem → geada (o branco do alto da serra)
-   ============================================================ */
+/* ==========================================================
+   DORME NO ALTO
+   Paleta: névoa de amanhecer na serra + laranja de barraca.
+   Sem monoespaçada, sem fundo preto, sem rampa de cores.
+   O desenho do perfil de subida é a única voz alta da página.
+   ========================================================== */
 :root{
-  --basalto:#141C1A;
-  --basalto-2:#1A2422;
-  --basalto-3:#212D29;
-  --linha:rgba(236,231,219,.13);
-  --linha-forte:rgba(236,231,219,.26);
-  --osso:#ECE7DB;
-  --osso-2:#A8B3AC;
-  --osso-3:#75817B;
+  --neve:#F4F6F5;
+  --nevoa:#E6EBEA;
+  --pedra:#CBD4D2;
+  --pedra-forte:#9BA9A6;
+  --tinta:#0F1C22;
+  --tinta-2:#3D4E54;
+  --tinta-3:#6C7C82;
+  --barraca:#F2600C;
+  --agua:#3F7E9E;
 
-  --h1:#4E7D55;   /* 300–600   */
-  --h2:#7E9A44;   /* 600–1000  */
-  --h3:#C9A03F;   /* 1000–1400 */
-  --h4:#C4693C;   /* 1400–1700 */
-  --h5:#E4DCC6;   /* 1700+     */
-  --ambar:#D9A441;
+  --display:"Big Shoulders Display",system-ui,sans-serif;
+  --corpo:"Manrope",system-ui,sans-serif;
 
-  --display:"Bricolage Grotesque",system-ui,sans-serif;
-  --corpo:"IBM Plex Sans",system-ui,sans-serif;
-  --dado:"IBM Plex Mono",ui-monospace,monospace;
-
-  --raio:3px;
-  --max:1500px;
+  --r:10px;
+  --max:1320px;
+  --sombra:0 1px 2px rgba(15,28,34,.05), 0 8px 24px -12px rgba(15,28,34,.18);
 }
-
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{
-  background:var(--basalto);
-  color:var(--osso);
+  background:var(--neve);
+  color:var(--tinta);
   font-family:var(--corpo);
-  font-size:15px;
+  font-size:16px;
   line-height:1.55;
   -webkit-font-smoothing:antialiased;
 }
 a{color:inherit}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 input,select{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--ambar);outline-offset:2px}
+:focus-visible{outline:2.5px solid var(--barraca);outline-offset:2px;border-radius:4px}
+.env{max-width:var(--max);margin:0 auto;padding-inline:clamp(18px,4vw,44px)}
 
-.env{max-width:var(--max);margin:0 auto;padding-inline:clamp(16px,3vw,40px)}
-
-/* ---------- topo ---------- */
-.cabeca{
-  border-bottom:1px solid var(--linha);
-  padding-block:clamp(28px,5vw,56px) 0;
-  position:relative;
-  overflow:hidden;
+/* ---------------- hero ---------------- */
+.capa{padding-block:clamp(34px,6vw,72px) 0}
+.selo{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--tinta-3);
 }
-/* curvas de nível ao fundo do cabeçalho */
-.curvas{
-  position:absolute;inset:0;
-  opacity:.5;
-  pointer-events:none;
-  mask-image:linear-gradient(to bottom,#000 0%,transparent 78%);
-  -webkit-mask-image:linear-gradient(to bottom,#000 0%,transparent 78%);
+.selo::before{
+  content:"";width:22px;height:2px;background:var(--barraca);border-radius:2px;
 }
-.marca{
-  display:flex;align-items:baseline;gap:10px;
-  font-family:var(--dado);font-size:11px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--osso-3);
-  position:relative;z-index:1;
-}
-.marca b{color:var(--ambar);font-weight:600}
-.titulo{
+.capa h1{
   font-family:var(--display);
   font-weight:800;
-  font-size:clamp(2.5rem,7.4vw,5.6rem);
-  line-height:.9;
-  letter-spacing:-.035em;
-  margin:clamp(16px,3vw,28px) 0 0;
-  max-width:15ch;
-  position:relative;z-index:1;
+  font-size:clamp(3.4rem,11.5vw,8rem);
+  line-height:.84;
+  letter-spacing:-.015em;
+  text-transform:uppercase;
+  margin:clamp(14px,2.5vw,22px) 0 0;
 }
-.titulo em{font-style:normal;color:var(--ambar)}
-.linha-fina{
-  margin-top:20px;max-width:56ch;color:var(--osso-2);
-  font-size:clamp(15px,1.5vw,17px);
-  position:relative;z-index:1;
-}
-.leitura{
-  display:flex;flex-wrap:wrap;gap:0;
-  margin-top:clamp(28px,4vw,44px);
-  border-top:1px solid var(--linha);
-  position:relative;z-index:1;
-}
-.leitura div{
-  padding:14px 22px 16px 0;margin-right:22px;
-  border-right:1px solid var(--linha);
-}
-.leitura div:last-child{border-right:none}
-.leitura .n{font-family:var(--dado);font-size:22px;font-weight:500;letter-spacing:-.02em}
-.leitura .r{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3);font-family:var(--dado)}
-
-/* escala hipsométrica */
-.escala{display:flex;gap:1px;margin-top:22px;position:relative;z-index:1}
-.escala span{
-  flex:1;height:5px;
-  font-family:var(--dado);font-size:10px;
-}
-.escala i{display:block;height:5px}
-.escala u{
-  display:block;text-decoration:none;padding-top:6px;
-  color:var(--osso-3);font-style:normal;letter-spacing:.04em;
+.capa h1 span{color:var(--barraca)}
+.chamada{
+  margin-top:clamp(18px,2.5vw,26px);
+  max-width:46ch;
+  font-size:clamp(16px,1.7vw,18.5px);
+  color:var(--tinta-2);
 }
 
-/* ---------- barra de filtros ---------- */
-.barra{
-  position:sticky;top:0;z-index:600;
-  background:rgba(20,28,26,.93);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--linha);
+/* horizonte gerado a partir do acervo */
+.horizonte{
+  margin-top:clamp(24px,4vw,40px);
+  border-bottom:2px solid var(--tinta);
+  position:relative;
 }
-.barra-in{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  padding-block:12px;
+.horizonte svg{display:block;width:100%;height:clamp(96px,13vw,168px)}
+.horizonte-nota{
+  position:absolute;right:0;bottom:10px;
+  font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--tinta-3);background:var(--neve);padding-left:10px;
 }
+
+/* ---------------- filtros ---------------- */
+.filtros{
+  position:sticky;top:0;z-index:700;
+  background:rgba(244,246,245,.94);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--pedra);
+  margin-top:clamp(20px,3vw,30px);
+}
+.filtros-in{display:flex;align-items:center;gap:10px;padding-block:11px;flex-wrap:wrap}
 .busca{
-  display:flex;align-items:center;gap:8px;
-  background:var(--basalto-2);border:1px solid var(--linha);
-  border-radius:var(--raio);padding:0 10px;min-width:200px;flex:1 1 200px;max-width:300px;
+  display:flex;align-items:center;gap:9px;
+  background:#fff;border:1px solid var(--pedra);border-radius:99px;
+  padding:0 15px;flex:1 1 210px;max-width:290px;
 }
-.busca input{background:none;border:none;padding:9px 0;width:100%;font-size:14px}
-.busca input::placeholder{color:var(--osso-3)}
-.busca svg{flex:none;opacity:.5}
+.busca input{background:none;border:none;padding:10px 0;width:100%;font-size:15px}
+.busca input::placeholder{color:var(--tinta-3)}
+.busca svg{flex:none;color:var(--tinta-3)}
+.pilha{display:flex;gap:6px;align-items:center;flex:none}
+.marca-f{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta-3);margin-right:1px}
+.pil{
+  padding:8px 14px;border:1px solid var(--pedra);border-radius:99px;
+  font-size:14px;font-weight:600;color:var(--tinta-2);
+  transition:background .14s,border-color .14s,color .14s;white-space:nowrap;
+}
+.pil:hover{border-color:var(--pedra-forte)}
+.pil[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--neve)}
+.pil.acesa[aria-pressed="true"]{background:var(--barraca);border-color:var(--barraca)}
+select.pil{
+  cursor:pointer;appearance:none;padding-right:32px;background-color:#fff;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236C7C82' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;
+}
+.zerar{font-size:14px;font-weight:600;color:var(--tinta-3);text-decoration:underline;text-underline-offset:4px;padding:8px 2px}
+.zerar:hover{color:var(--barraca)}
 
-.grupo{display:flex;gap:4px;align-items:center}
-.rotulo{
-  font-family:var(--dado);font-size:10px;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--osso-3);margin-right:2px;
-}
-.chip{
-  padding:7px 11px;border:1px solid var(--linha);border-radius:var(--raio);
-  font-family:var(--dado);font-size:12px;letter-spacing:.02em;
-  color:var(--osso-2);transition:.15s;white-space:nowrap;
-}
-.chip:hover{border-color:var(--linha-forte);color:var(--osso)}
-.chip[aria-pressed="true"]{background:var(--osso);color:var(--basalto);border-color:var(--osso);font-weight:600}
-select.chip{padding-right:22px;cursor:pointer;appearance:none;
-  background-image:linear-gradient(45deg,transparent 50%,var(--osso-3) 50%),linear-gradient(135deg,var(--osso-3) 50%,transparent 50%);
-  background-position:calc(100% - 12px) 13px,calc(100% - 8px) 13px;
-  background-size:4px 4px,4px 4px;background-repeat:no-repeat}
-select.chip option{background:var(--basalto-2);color:var(--osso)}
-.limpar{font-family:var(--dado);font-size:12px;color:var(--osso-3);text-decoration:underline;text-underline-offset:3px;padding:7px 4px}
-.limpar:hover{color:var(--ambar)}
+/* ---------------- corpo ---------------- */
+.palco{display:grid;grid-template-columns:1fr;gap:clamp(20px,3vw,34px);padding-block:clamp(20px,3vw,32px) 72px}
+@media(min-width:1000px){ .palco{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)} }
 
-/* ---------- corpo ---------- */
-.corpo{
-  display:grid;
-  grid-template-columns:96px minmax(330px,1fr) 1.05fr;
-  gap:clamp(16px,2vw,28px);
-  padding-block:clamp(18px,3vw,32px) 60px;
-  align-items:start;
+.placar{
+  display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  margin-bottom:14px;
 }
+.placar b{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:.01em}
+.placar span{font-size:13.5px;color:var(--tinta-3);font-weight:500}
 
-/* ---------- assinatura: perfil do acervo ---------- */
-.perfil{
-  position:sticky;top:74px;
-  height:calc(100vh - 110px);min-height:440px;
-  display:flex;flex-direction:column;
-}
-.perfil-cab{font-family:var(--dado);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3);margin-bottom:10px}
-.trilho{
-  position:relative;flex:1;
-  border-left:1px solid var(--linha);
-  border-right:1px solid var(--linha);
-  touch-action:none;
-  cursor:crosshair;
-}
-.faixa{position:absolute;left:0;right:0}
-.faixa i{position:absolute;inset:0;opacity:.13}
-.grade{position:absolute;left:0;right:0;height:0;border-top:1px dashed var(--linha)}
-.grade b{
-  position:absolute;left:2px;top:-14px;
-  font-family:var(--dado);font-size:9px;color:var(--osso-3);font-weight:400;letter-spacing:.04em;
-}
-.ponto{
-  position:absolute;width:7px;height:7px;border-radius:50%;
-  transform:translate(-50%,-50%);
-  border:1px solid rgba(20,28,26,.85);
-  transition:transform .18s,opacity .18s;
-  cursor:pointer;
-}
-.ponto:hover{transform:translate(-50%,-50%) scale(1.9);z-index:5}
-.ponto.fora{opacity:.14}
-.ponto.sel{transform:translate(-50%,-50%) scale(2.3);box-shadow:0 0 0 3px rgba(217,164,65,.35);z-index:6}
-.veu{position:absolute;left:0;right:0;background:rgba(20,28,26,.78);pointer-events:none}
-.puxador{
-  position:absolute;left:-6px;right:-6px;height:2px;background:var(--ambar);
-  cursor:ns-resize;touch-action:none;
-}
-.puxador::after{
-  content:attr(data-v);position:absolute;right:0;top:3px;
-  font-family:var(--dado);font-size:10px;color:var(--ambar);
-  background:var(--basalto);padding:0 3px;letter-spacing:.02em;
-}
-.puxador.baixo::after{top:-17px}
-.puxador::before{
-  content:"";position:absolute;left:0;right:0;top:-9px;height:20px;
-}
-.perfil-eixo{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;font-family:var(--dado);font-size:9.5px;color:var(--osso-3);letter-spacing:.1em;margin-bottom:6px}
+.acervo{display:grid;gap:12px}
+@media(min-width:560px) and (max-width:999px){ .acervo{grid-template-columns:1fr 1fr} }
 
-/* ---------- lista ---------- */
-.lista-cab{
-  display:flex;justify-content:space-between;align-items:baseline;
-  font-family:var(--dado);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--osso-3);margin-bottom:10px;
+/* ---------------- card ---------------- */
+.morro{
+  background:#fff;
+  border:1px solid var(--pedra);
+  border-radius:var(--r);
+  overflow:hidden;
+  transition:border-color .16s,box-shadow .16s,transform .16s;
 }
-.lista{display:flex;flex-direction:column;gap:1px}
+.morro:hover{border-color:var(--pedra-forte);box-shadow:var(--sombra)}
+.morro.ativo{border-color:var(--tinta);box-shadow:var(--sombra)}
+.morro-cima{display:block;width:100%;text-align:left;padding:0}
 
-.ficha{
-  background:var(--basalto-2);
-  border:1px solid transparent;
-  border-radius:var(--raio);
-  transition:background .15s;
+/* perfil de subida — a assinatura */
+.perfil{display:block;width:100%;height:104px;background:linear-gradient(180deg,#fff 0%,var(--nevoa) 100%)}
+.perfil-cota{
+  font-family:var(--display);font-weight:700;font-size:19px;
+  fill:var(--tinta);letter-spacing:.01em;
 }
-.ficha:hover{background:var(--basalto-3)}
-.ficha.aberta{background:var(--basalto-3);border-color:var(--linha)}
-.ficha-topo{
-  display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
-  width:100%;padding:13px 15px;text-align:left;
-}
-.cota{
-  font-family:var(--dado);font-size:19px;font-weight:500;letter-spacing:-.03em;
-  min-width:62px;position:relative;padding-left:11px;
-}
-.cota::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:3px;border-radius:2px;background:var(--cor)}
-.cota small{font-size:10px;color:var(--osso-3);font-weight:400;letter-spacing:0}
-.ficha h3{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
-.ficha .onde{font-size:12.5px;color:var(--osso-3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ficha-topo>div:nth-child(2){min-width:0}
-.selos{display:flex;gap:5px;align-items:center;flex:none}
-.selo{
-  font-family:var(--dado);font-size:10px;letter-spacing:.04em;
-  padding:3px 6px;border:1px solid var(--linha);border-radius:2px;color:var(--osso-2);
-  white-space:nowrap;
-}
-.selo.dorme{border-color:rgba(217,164,65,.5);color:var(--ambar)}
-.selo.nao{border-color:rgba(196,105,60,.45);color:#D08A66}
-.grau{display:flex;gap:2px;align-items:center}
-.grau i{width:4px;height:11px;background:rgba(236,231,219,.16);border-radius:1px}
-.grau i.on{background:var(--osso)}
+.perfil-rot{font-family:var(--corpo);font-size:10.5px;font-weight:600;fill:var(--tinta-3);letter-spacing:.05em;text-transform:uppercase}
 
-.detalhe{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease}
-.ficha.aberta .detalhe{grid-template-rows:1fr}
-.detalhe-in{overflow:hidden}
-.detalhe-corpo{padding:0 15px 16px;border-top:1px solid var(--linha);margin-top:2px;padding-top:14px}
-.nota{font-size:14px;color:var(--osso-2);max-width:62ch}
-.dados{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));
-  gap:1px;background:var(--linha);border:1px solid var(--linha);
-  margin:14px 0;border-radius:var(--raio);overflow:hidden;
+.morro-txt{padding:14px 16px 16px}
+.morro h3{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.55rem,3.4vw,1.95rem);line-height:.98;
+  letter-spacing:.005em;text-transform:uppercase;
 }
-.dados div{background:var(--basalto-2);padding:9px 10px}
-.dados dt{font-family:var(--dado);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3)}
-.dados dd{font-family:var(--dado);font-size:14px;margin-top:3px}
-.acesso{font-size:13.5px;color:var(--osso-2);display:flex;gap:9px;margin-top:9px}
-.acesso b{font-family:var(--dado);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3);flex:none;width:58px;padding-top:3px}
-.acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.acao{
-  font-family:var(--dado);font-size:11.5px;letter-spacing:.03em;
-  padding:7px 10px;border:1px solid var(--linha);border-radius:var(--raio);
-  color:var(--osso-2);text-decoration:none;display:inline-flex;gap:6px;align-items:center;transition:.15s;
-}
-.acao:hover{border-color:var(--ambar);color:var(--ambar)}
-.aviso-conf{
-  font-family:var(--dado);font-size:10.5px;color:#D08A66;margin-top:12px;
-  display:flex;gap:7px;align-items:flex-start;
-}
+.onde{font-size:13.5px;color:var(--tinta-3);margin-top:4px;font-weight:500}
 
-.vazio{padding:60px 20px;text-align:center;color:var(--osso-3)}
-.vazio p{font-family:var(--display);font-size:20px;color:var(--osso-2);margin-bottom:6px}
+.fatos{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.fato{
+  font-size:13px;font-weight:600;color:var(--tinta-2);
+  background:var(--nevoa);border-radius:6px;padding:4px 9px;
+}
+.fato.dorme{background:var(--barraca);color:#fff}
+.fato.seco{color:#8A4B12;background:#FBE9DC}
+.fato.molha{color:#215A75;background:#DDEBF2}
+.fato.nao{background:transparent;border:1px solid var(--pedra);color:var(--tinta-3)}
 
-/* ---------- mapa ---------- */
-.painel-mapa{position:sticky;top:74px}
-.mapa-cab{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-.mapa-cab span{font-family:var(--dado);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3)}
-.camadas{display:flex;gap:4px}
+/* detalhe */
+.gaveta{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.4,0,.2,1)}
+.morro.ativo .gaveta{grid-template-rows:1fr}
+.gaveta-in{overflow:hidden}
+.gaveta-corpo{padding:0 16px 18px;border-top:1px solid var(--nevoa);margin-top:14px;padding-top:15px}
+.relato{font-size:15px;color:var(--tinta-2);max-width:60ch}
+.linha{display:flex;gap:12px;margin-top:13px;font-size:14.5px;color:var(--tinta-2)}
+.linha b{
+  flex:none;width:64px;font-size:11.5px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--tinta-3);padding-top:3px;
+}
+.botoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.bt{
+  font-size:13.5px;font-weight:600;padding:9px 14px;
+  border:1px solid var(--pedra);border-radius:99px;color:var(--tinta-2);
+  text-decoration:none;display:inline-flex;gap:7px;align-items:center;transition:.14s;
+}
+.bt:hover{border-color:var(--tinta);color:var(--tinta)}
+.bt.forte{background:var(--tinta);border-color:var(--tinta);color:var(--neve)}
+.bt.forte:hover{background:var(--barraca);border-color:var(--barraca);color:#fff}
+.ressalva{
+  margin-top:14px;font-size:13px;color:#8A4B12;background:#FBE9DC;
+  border-radius:8px;padding:9px 12px;display:flex;gap:9px;
+}
+.ressalva svg{flex:none;margin-top:3px}
+
+/* ---------------- mapa ---------------- */
+.painel{position:relative}
+@media(min-width:1000px){ .painel{position:sticky;top:70px;align-self:start} }
+.painel-cima{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:12px}
+.painel-cima b{font-family:var(--display);font-size:26px;font-weight:700}
 #mapa{
-  height:calc(100vh - 130px);min-height:440px;
-  border:1px solid var(--linha);border-radius:var(--raio);
-  background:var(--basalto-2);
+  height:clamp(300px,52vh,620px);
+  border:1px solid var(--pedra);border-radius:var(--r);
+  background:var(--nevoa);
 }
-.leaflet-container{background:var(--basalto-2);font-family:var(--corpo)}
-.leaflet-popup-content-wrapper{
-  background:var(--basalto-3);color:var(--osso);border-radius:var(--raio);
-  border:1px solid var(--linha-forte);box-shadow:0 12px 30px rgba(0,0,0,.5);
-}
-.leaflet-popup-tip{background:var(--basalto-3);border:1px solid var(--linha-forte)}
-.leaflet-popup-content{margin:12px 14px;font-size:13px}
-.leaflet-popup-close-button{color:var(--osso-3)!important}
-.pop-cota{font-family:var(--dado);font-size:12px;color:var(--ambar);letter-spacing:.04em}
-.pop-nome{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-.02em;margin:2px 0 3px}
-.pop-onde{color:var(--osso-3);font-size:12px}
-.pop-ver{font-family:var(--dado);font-size:11px;margin-top:8px;color:var(--ambar);text-decoration:underline;text-underline-offset:3px}
-.leaflet-control-attribution{background:rgba(20,28,26,.8)!important;color:var(--osso-3)!important;font-size:9px!important}
-.leaflet-control-attribution a{color:var(--osso-2)!important}
-.leaflet-control-zoom a{background:var(--basalto-2)!important;color:var(--osso)!important;border-color:var(--linha)!important}
+.leaflet-container{background:var(--nevoa);font-family:var(--corpo)}
+.leaflet-popup-content-wrapper{border-radius:var(--r);box-shadow:var(--sombra);border:1px solid var(--pedra)}
+.leaflet-popup-content{margin:13px 15px;font-size:14px}
+.pop b{font-family:var(--display);font-size:21px;font-weight:700;text-transform:uppercase;display:block;line-height:1;letter-spacing:.01em}
+.pop i{font-style:normal;color:var(--tinta-3);font-size:12.5px;font-weight:500}
+.pop u{display:block;margin-top:7px;text-decoration:none;font-size:12.5px;font-weight:700;color:var(--barraca)}
+.leaflet-control-attribution{font-size:10px!important}
 
-/* ---------- rodapé ---------- */
-.pe{border-top:1px solid var(--linha);padding-block:36px 60px;color:var(--osso-3);font-size:13px}
-.pe-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:28px}
-.pe h4{font-family:var(--dado);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--osso-2);margin-bottom:8px;font-weight:500}
-.pe p{max-width:44ch}
-.pe ul{list-style:none;font-family:var(--dado);font-size:12px;line-height:1.9}
-.pe .prox li::before{content:"→ ";color:var(--ambar)}
+/* ---------------- vazio ---------------- */
+.vazio{
+  background:#fff;border:1px dashed var(--pedra);border-radius:var(--r);
+  padding:44px 26px;text-align:center;
+}
+.vazio b{font-family:var(--display);font-size:27px;font-weight:700;display:block;text-transform:uppercase}
+.vazio span{color:var(--tinta-3);font-size:14.5px}
 
-/* ---------- toast ---------- */
-.toast{
-  position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
-  background:var(--osso);color:var(--basalto);padding:9px 16px;border-radius:var(--raio);
-  font-family:var(--dado);font-size:12px;opacity:0;pointer-events:none;transition:.22s;z-index:900;
-}
-.toast.on{opacity:1;transform:translate(-50%,0)}
+/* ---------------- rodapé ---------------- */
+.pe{border-top:2px solid var(--tinta);padding-block:34px 64px}
+.pe-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:28px}
+.pe h4{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--tinta-3);margin-bottom:9px}
+.pe p{font-size:14px;color:var(--tinta-2);max-width:40ch}
+.pe ul{list-style:none;font-size:14px;color:var(--tinta-2);line-height:1.85}
 
-/* ---------- responsivo ---------- */
-@media(max-width:1080px){
-  .corpo{grid-template-columns:76px 1fr;grid-template-areas:"mapa mapa" "perfil lista"}
-  .painel-mapa{grid-area:mapa;position:static}
-  #mapa{height:320px;min-height:0}
-  .perfil{grid-area:perfil;position:sticky;top:120px;height:calc(100vh - 160px)}
-  .lista-area{grid-area:lista}
+/* ---------------- aviso ---------------- */
+.aviso{
+  position:fixed;left:50%;bottom:22px;transform:translate(-50%,12px);
+  background:var(--tinta);color:var(--neve);padding:11px 20px;border-radius:99px;
+  font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:900;
 }
-@media(max-width:760px){
-  .barra-in{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:8px}
-  .barra-in::-webkit-scrollbar{display:none}
-  .rotulo{display:none}
-  .busca{flex:0 0 168px;min-width:0}
-  .grupo{flex:none}
-  .limpar{flex:none}
-}
-@media(max-width:1080px){
-  .perfil{top:64px;height:calc(100vh - 100px)}
-}
+.aviso.on{opacity:1;transform:translate(-50%,0)}
+
 @media(max-width:620px){
-  .corpo{grid-template-columns:58px 1fr;gap:12px}
-  .ficha-topo{grid-template-columns:auto 1fr;gap:10px;padding:12px}
-  .selos{grid-column:1/-1;flex-wrap:wrap}
-  .leitura div{padding-right:16px;margin-right:16px}
-  .escala u{font-size:9px}
-  .titulo{font-size:clamp(2.1rem,10vw,3rem)}
+  .filtros-in{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:8px}
+  .filtros-in::-webkit-scrollbar{display:none}
+  .marca-f{display:none}
+  .busca{flex:0 0 168px}
 }
 @media(prefers-reduced-motion:reduce){
-  *{animation:none!important;transition:none!important}
+  *{transition:none!important;animation:none!important}
   html{scroll-behavior:auto}
 }
-
-/* entrada suave das fichas */
-@keyframes sobe{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.ficha{animation:sobe .3s backwards}
 </style>
 </head>
 <body>
 
-<header class="cabeca">
-  <svg class="curvas" preserveAspectRatio="none" viewBox="0 0 1200 300" aria-hidden="true">
-    <g fill="none" stroke="rgba(236,231,219,0.09)" stroke-width="1">
-      <path d="M-20,262 C180,238 300,278 460,246 C620,214 760,258 920,232 C1040,212 1140,236 1220,222"/>
-      <path d="M-20,238 C190,210 310,254 470,218 C630,182 770,232 930,202 C1050,180 1150,208 1220,194"/>
-      <path d="M-20,212 C200,180 320,228 480,188 C640,148 780,204 940,170 C1060,146 1160,178 1220,164"/>
-      <path d="M-20,184 C210,148 330,200 490,156 C650,112 790,174 950,136 C1070,110 1170,146 1220,132"/>
-      <path d="M-20,154 C220,114 340,170 500,122 C660,74 800,142 960,100 C1080,72 1180,112 1220,98"/>
-      <path d="M-20,122 C230,78 350,138 510,86 C670,34 810,108 970,62 C1090,32 1190,76 1220,62"/>
-    </g>
-  </svg>
-
+<header class="capa">
   <div class="env">
-    <div class="marca"><b>ACIMA DE 300</b><span>Catálogo aberto · Paraná · Santa Catarina · Rio Grande do Sul</span></div>
-    <h1 class="titulo">Onde armar barraca acima dos <em>300&nbsp;metros</em></h1>
-    <p class="linha-fina">Cada morro aqui traz o que muda a viagem: quanto sobe, quanto anda, se tem água no caminho e se dá para dormir no alto. Começamos pelos três estados do Sul.</p>
+    <div class="selo">Paraná · Santa Catarina · Rio Grande do Sul</div>
+    <h1>Dorme<br>no <span>alto</span></h1>
+    <p class="chamada">Ninguém escolhe morro por metro de altitude. Escolhe por saber se dá para armar a barraca lá em cima, se tem água no caminho e quanto a subida vai cobrar. É isso que está aqui.</p>
 
-    <div class="leitura">
-      <div><div class="n" id="n-total">—</div><div class="r">no catálogo</div></div>
-      <div><div class="n" id="n-alto">—</div><div class="r">cume mais alto</div></div>
-      <div><div class="n" id="n-dorme">—</div><div class="r">com pernoite no alto</div></div>
-      <div><div class="n" id="n-verificar">—</div><div class="r">a confirmar em campo</div></div>
+    <div class="horizonte">
+      <svg id="horizonte" preserveAspectRatio="none" viewBox="0 0 1200 180" aria-label="Silhueta dos morros do acervo"></svg>
+      <div class="horizonte-nota" id="horizonte-nota"></div>
     </div>
-
-    <div class="escala" id="escala" aria-hidden="true"></div>
-    <div style="height:clamp(24px,4vw,44px)"></div>
   </div>
 </header>
 
-<nav class="barra">
-  <div class="env barra-in">
+<nav class="filtros" aria-label="Filtros">
+  <div class="env filtros-in">
     <label class="busca">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg>
-      <input type="search" id="busca" placeholder="Buscar morro ou município" aria-label="Buscar morro ou município">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4" stroke-linecap="round"/></svg>
+      <input type="search" id="busca" placeholder="Morro ou município" aria-label="Buscar morro ou município">
     </label>
 
-    <div class="grupo" role="group" aria-label="Estado">
-      <span class="rotulo">UF</span>
-      <button class="chip" data-uf="PR" aria-pressed="false">PR</button>
-      <button class="chip" data-uf="SC" aria-pressed="false">SC</button>
-      <button class="chip" data-uf="RS" aria-pressed="false">RS</button>
+    <div class="pilha" role="group" aria-label="Onde você dorme">
+      <span class="marca-f">Dorme</span>
+      <button class="pil acesa" data-cama="alto" aria-pressed="false">No alto</button>
+      <button class="pil" data-cama="perto" aria-pressed="false">Na base</button>
     </div>
 
-    <div class="grupo" role="group" aria-label="Acampamento">
-      <span class="rotulo">Barraca</span>
-      <button class="chip" data-acamp="alto" aria-pressed="false">Dorme no alto</button>
-      <button class="chip" data-acamp="qualquer" aria-pressed="false">Dorme perto</button>
+    <div class="pilha" role="group" aria-label="Estado">
+      <span class="marca-f">UF</span>
+      <button class="pil" data-uf="PR" aria-pressed="false">PR</button>
+      <button class="pil" data-uf="SC" aria-pressed="false">SC</button>
+      <button class="pil" data-uf="RS" aria-pressed="false">RS</button>
     </div>
 
-    <div class="grupo">
-      <span class="rotulo">Nível até</span>
-      <select class="chip" id="grau" aria-label="Dificuldade máxima">
-        <option value="5">qualquer</option>
-        <option value="1">1 · leve</option>
-        <option value="2">2 · moderada</option>
-        <option value="3">3 · puxada</option>
-        <option value="4">4 · difícil</option>
+    <div class="pilha">
+      <span class="marca-f">Água</span>
+      <button class="pil" data-agua="1" aria-pressed="false">Tem no caminho</button>
+    </div>
+
+    <div class="pilha">
+      <select class="pil" id="nivel" aria-label="Nível máximo">
+        <option value="5">Qualquer nível</option>
+        <option value="1">Até leve</option>
+        <option value="2">Até moderada</option>
+        <option value="3">Até puxada</option>
+        <option value="4">Até difícil</option>
+      </select>
+      <select class="pil" id="ordem" aria-label="Ordenar">
+        <option value="alt-desc">Mais alto primeiro</option>
+        <option value="grau-asc">Mais fácil primeiro</option>
+        <option value="curta">Subida mais curta</option>
+        <option value="nome">Nome A–Z</option>
       </select>
     </div>
 
-    <div class="grupo">
-      <span class="rotulo">Ordem</span>
-      <select class="chip" id="ordem" aria-label="Ordenar por">
-        <option value="alt-desc">mais alto</option>
-        <option value="alt-asc">mais baixo</option>
-        <option value="grau-asc">mais fácil</option>
-        <option value="nome">A–Z</option>
-      </select>
-    </div>
-
-    <button class="limpar" id="limpar">limpar</button>
+    <button class="zerar" id="zerar">Limpar</button>
   </div>
 </nav>
 
-<main class="env corpo">
-
-  <!-- assinatura: perfil de altitude do acervo, que também filtra -->
-  <section class="perfil" aria-label="Filtro de altitude">
-    <div class="perfil-cab">Perfil<br>do acervo</div>
-    <div class="perfil-eixo"><span>PR</span><span>SC</span><span>RS</span></div>
-    <div class="trilho" id="trilho">
-      <div class="veu" id="veu-alto"></div>
-      <div class="veu" id="veu-baixo"></div>
-      <div class="puxador" id="pux-alto" data-v="" role="slider" aria-label="Altitude máxima" tabindex="0"></div>
-      <div class="puxador baixo" id="pux-baixo" data-v="" role="slider" aria-label="Altitude mínima" tabindex="0"></div>
+<main class="env palco">
+  <section>
+    <div class="placar">
+      <b id="contagem">—</b>
+      <span id="resumo"></span>
     </div>
+    <div class="acervo" id="acervo"></div>
   </section>
 
-  <section class="lista-area">
-    <div class="lista-cab">
-      <span id="contagem">—</span>
-      <span id="faixa-txt"></span>
-    </div>
-    <div class="lista" id="lista"></div>
-  </section>
-
-  <section class="painel-mapa">
-    <div class="mapa-cab">
-      <span>Mapa</span>
-      <div class="camadas">
-        <button class="chip" data-camada="topo" aria-pressed="true">topográfico</button>
-        <button class="chip" data-camada="sat" aria-pressed="false">satélite</button>
+  <section class="painel">
+    <div class="painel-cima">
+      <b>No mapa</b>
+      <div class="pilha">
+        <button class="pil" data-camada="topo" aria-pressed="true">Relevo</button>
+        <button class="pil" data-camada="sat" aria-pressed="false">Satélite</button>
       </div>
     </div>
     <div id="mapa"></div>
@@ -482,27 +342,27 @@ select.chip option{background:var(--basalto-2);color:var(--osso)}
 <footer class="pe">
   <div class="env pe-grade">
     <div>
-      <h4>Como ler os dados</h4>
-      <p>Altitudes vêm de levantamentos cartográficos e de clubes de montanhismo, e variam de uma fonte para outra. Distância, tempo e desnível são estimativas de subida, não de ida e volta.</p>
+      <h4>Como ler</h4>
+      <p>Distância, tempo e desnível são só da subida, não da ida e volta. O desenho no topo de cada ficha vem desses mesmos números: quanto mais larga a silhueta, mais longa a caminhada; quanto mais alta, mais desnível.</p>
     </div>
     <div>
       <h4>Antes de subir</h4>
-      <p>Boa parte destes morros fica em propriedade particular ou em unidade de conservação. Confirme a entrada e a regra de pernoite com o parque, a prefeitura ou o dono da terra. Leve o lixo de volta.</p>
+      <p>Muito morro daqui é propriedade particular ou unidade de conservação. Confirme entrada e pernoite com o dono, o parque ou a prefeitura. Leve o lixo de volta, inclusive o dos outros.</p>
     </div>
     <div>
-      <h4>Fontes</h4>
+      <h4>Vem de</h4>
       <ul>
-        <li>IBGE · cartas topográficas</li>
+        <li>Cartas topográficas do IBGE</li>
         <li>ICMBio e órgãos estaduais</li>
         <li>Clubes e guias de montanhismo</li>
-        <li>OpenStreetMap · OpenTopoMap</li>
+        <li>OpenStreetMap e OpenTopoMap</li>
       </ul>
     </div>
     <div>
-      <h4>Próximos passos</h4>
-      <ul class="prox">
-        <li>Fotos e relatos de campo</li>
+      <h4>Falta fazer</h4>
+      <ul>
         <li>Track GPX para baixar</li>
+        <li>Relato de quem dormiu lá</li>
         <li>Campings e apoio na base</li>
         <li>São Paulo e Minas Gerais</li>
       </ul>
@@ -510,7 +370,7 @@ select.chip option{background:var(--basalto-2);color:var(--osso)}
   </div>
 </footer>
 
-<div class="toast" id="toast"></div>
+<div class="aviso" id="aviso" role="status"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="dados.js"></script>
@@ -518,150 +378,156 @@ select.chip option{background:var(--basalto-2);color:var(--osso)}
 (function(){
 "use strict";
 
-/* ---------------- dados ---------------- */
-var BASE = (window.MORROS_SUL && window.MORROS_SUL.morros) ? window.MORROS_SUL : {morros:[],metadata:{}};
+/* ---------- dados ----------
+   Lê window.MORROS_SUL (gerado pelo build.py).
+   O bloco DEMO só entra em cena se dados.js não carregar — pode apagar
+   quando o arquivo estiver funcionando. */
+var DEMO = {morros:[
+ {id:"d1",nome:"Monte Crista",estado:"SC",municipios:["Garuva"],regiao:"Serra do Mar catarinense",altitude:927,lat:-26.0583,lon:-48.9083,tipo:"morro",dificuldade:3,trilha_km:9,tempo_h:5,ganho_m:850,acampamento:"cume",agua:"percurso",acesso:"Estrada de terra a partir da BR-101, mais 2 km entre bananais até o estacionamento particular.",epoca:"Março a novembro",nota:"Subida pelo Caminho dos Ambrósios, com escadaria de pedra ainda em pé. O melhor ponto de barraca não é o cume, é um marco pouco abaixo, protegido do vento.",confianca:"media"},
+ {id:"d2",nome:"Morro do Santo Anjo",estado:"SC",municipios:["Massaranduba"],regiao:"Vale do Itapocu",altitude:830,lat:-26.5583,lon:-49.0472,tipo:"morro",dificuldade:1,trilha_km:0.8,tempo_h:0.5,ganho_m:120,acampamento:"cume",agua:"nenhuma",acesso:"Localidade Alto Guarani, 15 km do centro. Acesso gratuito, estrada de paralelepípedo no trecho sinuoso.",epoca:"O ano todo",nota:"Vista de 360 graus e capela no ponto mais alto. Dá para ver o pôr e o nascer do sol do mesmo lugar. Não há água nenhuma no alto.",confianca:"media"}
+]};
+var BASE = (window.MORROS_SUL && window.MORROS_SUL.morros && window.MORROS_SUL.morros.length) ? window.MORROS_SUL : DEMO;
 var TODOS = BASE.morros.slice();
 
-/* ---------------- escala hipsométrica ---------------- */
-var FAIXAS = [
-  {min:300,  max:600,  cor:"#4E7D55", rot:"300"},
-  {min:600,  max:1000, cor:"#7E9A44", rot:"600"},
-  {min:1000, max:1400, cor:"#C9A03F", rot:"1000"},
-  {min:1400, max:1700, cor:"#C4693C", rot:"1400"},
-  {min:1700, max:2000, cor:"#E4DCC6", rot:"1700"}
-];
-function cor(a){
-  for(var i=FAIXAS.length-1;i>=0;i--) if(a>=FAIXAS[i].min) return FAIXAS[i].cor;
-  return FAIXAS[0].cor;
-}
-
-var ESC_MIN = 200, ESC_MAX = 1950;
-function pct(alt){ return (1 - (alt-ESC_MIN)/(ESC_MAX-ESC_MIN)) * 100; }
-function altDePct(p){ return Math.round(ESC_MIN + (1-p/100)*(ESC_MAX-ESC_MIN)); }
-
-var GRAUS = ["","leve","moderada","puxada","difícil","técnica"];
-var ACAMP = {
-  cume:     {txt:"dorme no alto",   classe:"dorme", alto:true},
-  percurso: {txt:"acampa na trilha",classe:"dorme", alto:true},
-  base:     {txt:"dorme na base",   classe:"",      alto:false},
-  camping:  {txt:"camping na base", classe:"",      alto:false},
-  proibido: {txt:"sem pernoite",    classe:"nao",   alto:false},
-  verificar:{txt:"pernoite a confirmar",classe:"", alto:false}
+/* ---------- vocabulário ---------- */
+var CAMA = {
+  cume:     {curto:"Dorme no cume",  alto:true,  onde:1.00},
+  percurso: {curto:"Dorme na trilha",alto:true,  onde:0.58},
+  base:     {curto:"Dorme na base",  alto:false, onde:0.06},
+  camping:  {curto:"Camping na base",alto:false, onde:0.06},
+  proibido: {curto:"Sem pernoite",   alto:false, onde:-1},
+  verificar:{curto:"Pernoite a confirmar",alto:false,onde:0.06}
 };
-var AGUA = {percurso:"no caminho", base:"só na base", sazonal:"sazonal", nenhuma:"leve a sua"};
+var AGUA = {
+  percurso:{txt:"Água no caminho",classe:"molha"},
+  base:    {txt:"Água só na base",classe:"molha"},
+  sazonal: {txt:"Água sazonal",   classe:""},
+  nenhuma: {txt:"Sem água — leve tudo",classe:"seco"}
+};
+var NIVEL = ["","leve","moderada","puxada","difícil","técnica"];
 
-/* ---------------- estado ---------------- */
-var filtro = {texto:"", ufs:[], acamp:"", grau:5, min:300, max:1950, ordem:"alt-desc"};
-var visiveis = [], selecionado = null, marcas = {}, mapa, camadaTopo, camadaSat;
+function num(n){ return n.toLocaleString("pt-BR"); }
+function km(v){ return (v<10 ? String(v).replace(".",",") : Math.round(v)) + " km"; }
+function horas(h){
+  if(h < 1) return Math.round(h*60) + " min";
+  if(h % 1 === 0) return h + " h";
+  return String(h).replace(".","h") + "min";
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
 
-var $ = function(s){ return document.querySelector(s); };
-var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
-
-/* ---------------- cabeçalho ---------------- */
-function montaCabeca(){
-  $("#n-total").textContent = TODOS.length;
-  var alto = TODOS.reduce(function(a,b){ return b.altitude>a.altitude?b:a; }, TODOS[0]);
-  $("#n-alto").innerHTML = alto.altitude.toLocaleString("pt-BR") + ' <span style="font-size:12px;color:var(--osso-3)">m · ' + alto.nome + '</span>';
-  $("#n-dorme").textContent = TODOS.filter(function(m){ return ACAMP[m.acampamento].alto; }).length;
-  $("#n-verificar").textContent = TODOS.filter(function(m){ return m.acampamento==="verificar"; }).length;
-
-  $("#escala").innerHTML = FAIXAS.map(function(f,i){
-    var fim = i===FAIXAS.length-1 ? "m e acima" : "";
-    return '<span><i style="background:'+f.cor+'"></i><u>'+f.rot+(fim?" "+fim:"")+'</u></span>';
-  }).join("");
+/* ---------- gerador de perfil de subida ----------
+   Semente pelo id, para o mesmo morro desenhar sempre igual. */
+function semente(txt){
+  var h = 2166136261;
+  for(var i=0;i<txt.length;i++){ h ^= txt.charCodeAt(i); h = Math.imul(h,16777619); }
+  return function(){
+    h += 0x6D2B79F5; var t = h;
+    t = Math.imul(t ^ t>>>15, t|1);
+    t ^= t + Math.imul(t ^ t>>>7, t|61);
+    return ((t ^ t>>>14)>>>0) / 4294967296;
+  };
 }
 
-/* ---------------- perfil / régua ---------------- */
-var COL = {PR:18, SC:50, RS:82};
-function montaPerfil(){
-  var t = $("#trilho");
-  FAIXAS.forEach(function(f){
-    var d = document.createElement("div");
-    d.className = "faixa";
-    d.style.top = pct(Math.min(f.max,ESC_MAX)) + "%";
-    d.style.height = (pct(f.min) - pct(Math.min(f.max,ESC_MAX))) + "%";
-    d.innerHTML = '<i style="background:'+f.cor+'"></i>';
-    t.appendChild(d);
-  });
-  [500,1000,1500].forEach(function(v){
-    var g = document.createElement("div");
-    g.className = "grade";
-    g.style.top = pct(v) + "%";
-    g.innerHTML = "<b>"+v+"</b>";
-    t.appendChild(g);
-  });
-  TODOS.forEach(function(m){
-    var p = document.createElement("button");
-    p.className = "ponto";
-    p.dataset.id = m.id;
-    p.style.top = pct(m.altitude) + "%";
-    p.style.left = COL[m.estado] + "%";
-    p.style.background = cor(m.altitude);
-    p.title = m.nome + " · " + m.altitude + " m";
-    p.setAttribute("aria-label", m.nome + ", " + m.altitude + " metros");
-    p.addEventListener("click", function(){ abrir(m.id, true); });
-    t.appendChild(p);
-  });
-  t.appendChild($("#veu-alto"));
-  t.appendChild($("#veu-baixo"));
-  t.appendChild($("#pux-alto"));
-  t.appendChild($("#pux-baixo"));
-  desenhaPuxadores();
-  ligaArraste();
-}
+function perfilSVG(m, largura, altura){
+  var L = largura, A = altura;
+  var chao = A - 20, teto = 26;
+  var rnd = semente(m.id || m.nome);
 
-function desenhaPuxadores(){
-  var pa = pct(filtro.max), pb = pct(filtro.min);
-  $("#pux-alto").style.top = pa + "%";
-  $("#pux-baixo").style.top = pb + "%";
-  $("#pux-alto").dataset.v = filtro.max + " m";
-  $("#pux-baixo").dataset.v = filtro.min + " m";
-  $("#veu-alto").style.top = "0"; $("#veu-alto").style.height = pa + "%";
-  $("#veu-baixo").style.top = pb + "%"; $("#veu-baixo").style.bottom = "0";
-  $("#faixa-txt").textContent = filtro.min + "–" + filtro.max + " m";
-}
+  var alturaPico = Math.max(.22, Math.min(1, (m.ganho_m||300)/1150));
+  var yPico = chao - (chao - teto) * alturaPico;
+  var rugosidade = (m.dificuldade||2) / 5;
 
-function ligaArraste(){
-  var trilho = $("#trilho"), arrastando = null;
-  function mover(ev){
-    if(!arrastando) return;
-    var r = trilho.getBoundingClientRect();
-    var y = Math.min(Math.max(ev.clientY - r.top, 0), r.height);
-    var v = altDePct(y / r.height * 100);
-    v = Math.round(v/10)*10;
-    if(arrastando === "alto") filtro.max = Math.max(v, filtro.min + 50);
-    else filtro.min = Math.min(Math.max(v,ESC_MIN), filtro.max - 50);
-    desenhaPuxadores(); aplica();
+  var x0 = 8, x1 = L - 8;
+  var passos = 26, pts = [];
+  for(var i=0;i<=passos;i++){
+    var t = i/passos;
+    var x = x0 + (x1-x0)*t;
+    /* curva base: sobe devagar e fecha íngreme perto do cume */
+    var subida = Math.pow(t, 1 + rugosidade*1.1);
+    var y = chao - (chao - yPico) * subida;
+    if(i>0 && i<passos) y += (rnd()-.5) * 13 * rugosidade;
+    pts.push([x, Math.max(teto-4, Math.min(chao, y))]);
   }
-  ["pux-alto","pux-baixo"].forEach(function(id){
-    $("#"+id).addEventListener("pointerdown", function(e){
-      arrastando = id === "pux-alto" ? "alto" : "baixo";
-      e.target.setPointerCapture(e.pointerId); e.preventDefault();
-    });
-    $("#"+id).addEventListener("keydown", function(e){
-      var passo = e.shiftKey ? 100 : 25, d = 0;
-      if(e.key === "ArrowUp") d = passo; else if(e.key === "ArrowDown") d = -passo; else return;
-      e.preventDefault();
-      if(id === "pux-alto") filtro.max = Math.min(ESC_MAX, Math.max(filtro.min+50, filtro.max+d));
-      else filtro.min = Math.max(ESC_MIN, Math.min(filtro.max-50, filtro.min+d));
-      desenhaPuxadores(); aplica();
-    });
-  });
-  document.addEventListener("pointermove", mover);
-  document.addEventListener("pointerup", function(){ arrastando = null; });
+
+  var d = "M" + x0 + "," + chao;
+  pts.forEach(function(p){ d += " L" + p[0].toFixed(1) + "," + p[1].toFixed(1); });
+  var linha = d;
+  d += " L" + x1 + "," + chao + " Z";
+
+  var cama = CAMA[m.acampamento] || CAMA.verificar;
+  var svg = "";
+  svg += '<path d="'+d+'" fill="#0F1C22" fill-opacity=".07"/>';
+  svg += '<path d="'+linha+'" fill="none" stroke="#0F1C22" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+  svg += '<line x1="0" y1="'+chao+'" x2="'+L+'" y2="'+chao+'" stroke="#CBD4D2" stroke-width="1"/>';
+
+  /* barraca no ponto onde se dorme */
+  if(cama.onde >= 0){
+    var idx = Math.round(cama.onde * passos);
+    idx = Math.max(0, Math.min(passos, idx));
+    var bx = pts[idx][0], by = pts[idx][1];
+    svg += '<g transform="translate('+bx.toFixed(1)+','+by.toFixed(1)+')">'
+        +  '<path d="M0,-13 L8,0 L-8,0 Z" fill="#F2600C"/>'
+        +  '<path d="M0,-13 L0,0" stroke="#fff" stroke-width="1.4"/>'
+        +  '</g>';
+  } else {
+    svg += '<g transform="translate('+(x0+10)+','+(chao)+')">'
+        +  '<path d="M0,-12 L7,0 L-7,0 Z" fill="none" stroke="#9BA9A6" stroke-width="1.6"/>'
+        +  '<path d="M-10,2 L10,-15" stroke="#9BA9A6" stroke-width="1.6" stroke-linecap="round"/>'
+        +  '</g>';
+  }
+
+  svg += '<text class="perfil-cota" x="'+(L-10)+'" y="'+(teto-4)+'" text-anchor="end">'+num(m.altitude)+' m</text>';
+  svg += '<text class="perfil-rot" x="10" y="'+(chao+15)+'">'+esc(km(m.trilha_km))+' · +'+num(m.ganho_m)+' m</text>';
+  svg += '<text class="perfil-rot" x="'+(L-10)+'" y="'+(chao+15)+'" text-anchor="end">'+esc(NIVEL[m.dificuldade]||"")+'</text>';
+
+  return '<svg class="perfil" viewBox="0 0 '+L+' '+A+'" preserveAspectRatio="none" aria-hidden="true">'+svg+'</svg>';
 }
 
-/* ---------------- filtro ---------------- */
+/* ---------- horizonte do acervo ---------- */
+function desenhaHorizonte(lista){
+  var svg = document.getElementById("horizonte");
+  var L = 1200, A = 180, chao = A - 2;
+  if(!lista.length){ svg.innerHTML = ""; document.getElementById("horizonte-nota").textContent = ""; return; }
+
+  var altMax = lista.reduce(function(a,m){ return Math.max(a, m.altitude); }, 0);
+  var ordenada = lista.slice().sort(function(a,b){ return a.altitude - b.altitude; });
+  var n = ordenada.length;
+  var largura = L / n;
+  var partes = "";
+
+  ordenada.forEach(function(m,i){
+    var cx = largura*(i+.5);
+    var h = 18 + (m.altitude/altMax) * (A - 52);
+    var meia = largura * .78;
+    var topo = chao - h;
+    partes += '<path d="M'+(cx-meia).toFixed(1)+','+chao+' L'+cx.toFixed(1)+','+topo.toFixed(1)+' L'+(cx+meia).toFixed(1)+','+chao+' Z" fill="#0F1C22" fill-opacity="'+(0.05 + (i/n)*0.13).toFixed(3)+'"/>';
+    if((CAMA[m.acampamento]||{}).alto){
+      partes += '<path d="M'+cx.toFixed(1)+','+(topo-9).toFixed(1)+' l5,8 l-10,0 Z" fill="#F2600C"/>';
+    }
+  });
+
+  svg.innerHTML = partes;
+  var dormem = lista.filter(function(m){ return (CAMA[m.acampamento]||{}).alto; }).length;
+  document.getElementById("horizonte-nota").textContent = dormem + " com barraca no alto";
+}
+
+/* ---------- estado ---------- */
+var filtro = {texto:"",ufs:[],cama:"",agua:false,nivel:5,ordem:"alt-desc"};
+var visiveis = [], aberto = null, mapa = null, marcas = {}, camadaTopo, camadaSat;
+var $ = function(s){ return document.querySelector(s); };
+var $$ = function(s){ return [].slice.call(document.querySelectorAll(s)); };
+
 function aplica(){
   var t = filtro.texto.toLowerCase().trim();
   visiveis = TODOS.filter(function(m){
-    if(m.altitude < filtro.min || m.altitude > filtro.max) return false;
+    var cama = CAMA[m.acampamento] || CAMA.verificar;
     if(filtro.ufs.length && filtro.ufs.indexOf(m.estado) < 0) return false;
-    if(m.dificuldade > filtro.grau) return false;
-    if(filtro.acamp === "alto" && !ACAMP[m.acampamento].alto) return false;
-    if(filtro.acamp === "qualquer" && m.acampamento === "proibido") return false;
+    if(m.dificuldade > filtro.nivel) return false;
+    if(filtro.cama === "alto" && !cama.alto) return false;
+    if(filtro.cama === "perto" && m.acampamento === "proibido") return false;
+    if(filtro.agua && m.agua !== "percurso") return false;
     if(t){
-      var alvo = (m.nome + " " + m.municipios.join(" ") + " " + m.regiao + " " + m.estado).toLowerCase();
+      var alvo = (m.nome+" "+m.municipios.join(" ")+" "+m.regiao+" "+m.estado).toLowerCase();
       if(alvo.indexOf(t) < 0) return false;
     }
     return true;
@@ -669,108 +535,99 @@ function aplica(){
 
   visiveis.sort(function(a,b){
     switch(filtro.ordem){
-      case "alt-asc":  return a.altitude - b.altitude;
       case "grau-asc": return a.dificuldade - b.dificuldade || b.altitude - a.altitude;
+      case "curta":    return a.trilha_km - b.trilha_km;
       case "nome":     return a.nome.localeCompare(b.nome,"pt-BR");
       default:         return b.altitude - a.altitude;
     }
   });
 
-  var ids = {};
-  visiveis.forEach(function(m){ ids[m.id] = 1; });
-  $$(".ponto").forEach(function(p){ p.classList.toggle("fora", !ids[p.dataset.id]); });
-
-  desenhaLista();
+  desenhaAcervo();
+  desenhaHorizonte(visiveis);
   desenhaMarcas();
+
   $("#contagem").textContent = visiveis.length + (visiveis.length === 1 ? " morro" : " morros");
+  var dormem = visiveis.filter(function(m){ return (CAMA[m.acampamento]||CAMA.verificar).alto; }).length;
+  $("#resumo").textContent = dormem ? dormem + " com pernoite no alto" : "nenhum com pernoite no alto";
 }
 
-/* ---------------- lista ---------------- */
-function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]; }); }
-
-function fichaHTML(m,i){
-  var a = ACAMP[m.acampamento];
-  var pontos = "";
-  for(var k=1;k<=5;k++) pontos += '<i class="'+(k<=m.dificuldade?"on":"")+'"></i>';
-  return '<article class="ficha" id="f-'+m.id+'" style="animation-delay:'+Math.min(i*14,220)+'ms">'
-    + '<button class="ficha-topo" aria-expanded="false" data-abre="'+m.id+'">'
-      + '<div class="cota" style="--cor:'+cor(m.altitude)+'">'+m.altitude+'<small> m</small></div>'
-      + '<div><h3>'+esc(m.nome)+'</h3><div class="onde">'+esc(m.municipios.join(", "))+' · '+m.estado+' · '+esc(m.regiao)+'</div></div>'
-      + '<div class="selos"><span class="selo '+a.classe+'">'+a.txt+'</span>'
-      + '<span class="grau" title="Nível '+m.dificuldade+' · '+GRAUS[m.dificuldade]+'">'+pontos+'</span></div>'
-    + '</button>'
-    + '<div class="detalhe"><div class="detalhe-in"><div class="detalhe-corpo">'
-      + '<p class="nota">'+esc(m.nota)+'</p>'
-      + '<dl class="dados">'
-        + '<div><dt>Nível</dt><dd>'+m.dificuldade+' · '+GRAUS[m.dificuldade]+'</dd></div>'
-        + '<div><dt>Subida</dt><dd>'+m.trilha_km+' km</dd></div>'
-        + '<div><dt>Tempo</dt><dd>~'+m.tempo_h+' h</dd></div>'
-        + '<div><dt>Desnível</dt><dd>'+m.ganho_m+' m</dd></div>'
-        + '<div><dt>Água</dt><dd>'+AGUA[m.agua]+'</dd></div>'
-      + '</dl>'
-      + '<div class="acesso"><b>Acesso</b><span>'+esc(m.acesso)+'</span></div>'
-      + '<div class="acesso"><b>Época</b><span>'+esc(m.epoca)+'</span></div>'
-      + '<div class="acesso"><b>Barraca</b><span>'+esc(a.txt.charAt(0).toUpperCase()+a.txt.slice(1))+'</span></div>'
-      + '<div class="acoes">'
-        + '<button class="acao" data-copia="'+m.lat.toFixed(5)+', '+m.lon.toFixed(5)+'">'+m.lat.toFixed(4)+', '+m.lon.toFixed(4)+' · copiar</button>'
-        + '<a class="acao" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+m.lat+','+m.lon+'">como chegar</a>'
-        + '<button class="acao" data-mapa="'+m.id+'">ver no mapa</button>'
+function cardHTML(m){
+  var cama = CAMA[m.acampamento] || CAMA.verificar;
+  var ag = AGUA[m.agua] || {txt:"Água a confirmar",classe:""};
+  return '<article class="morro" id="m-'+m.id+'">'
+    + '<button class="morro-cima" aria-expanded="false" data-abre="'+m.id+'">'
+      + perfilSVG(m, 380, 104)
+      + '<div class="morro-txt">'
+        + '<h3>'+esc(m.nome)+'</h3>'
+        + '<div class="onde">'+esc(m.municipios.join(", "))+' · '+m.estado+' · '+esc(m.regiao)+'</div>'
+        + '<div class="fatos">'
+          + '<span class="fato '+(cama.alto?"dorme":(m.acampamento==="proibido"?"nao":""))+'">'+cama.curto+'</span>'
+          + '<span class="fato '+ag.classe+'">'+ag.txt+'</span>'
+          + '<span class="fato">'+horas(m.tempo_h)+' de subida</span>'
+        + '</div>'
       + '</div>'
-      + (m.confianca === "media" ? '<div class="aviso-conf"><span>▲</span><span>Altitude e acesso ainda sem confirmação em campo. Cheque antes de fechar o roteiro.</span></div>' : '')
-    + '</div></div></div></article>';
+    + '</button>'
+    + '<div class="gaveta"><div class="gaveta-in"><div class="gaveta-corpo">'
+      + '<p class="relato">'+esc(m.nota)+'</p>'
+      + '<div class="linha"><b>Acesso</b><span>'+esc(m.acesso)+'</span></div>'
+      + '<div class="linha"><b>Época</b><span>'+esc(m.epoca)+'</span></div>'
+      + '<div class="botoes">'
+        + '<a class="bt forte" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='+m.lat+','+m.lon+'">Como chegar</a>'
+        + '<button class="bt" data-copia="'+m.lat.toFixed(5)+', '+m.lon.toFixed(5)+'">Copiar coordenadas</button>'
+      + '</div>'
+      + (m.confianca === "media"
+          ? '<div class="ressalva"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 1.5L13 12H1z" stroke-linejoin="round"/><path d="M7 6v2.5" stroke-linecap="round"/><circle cx="7" cy="10.3" r=".6" fill="currentColor" stroke="none"/></svg>'
+            + '<span>Altitude e acesso ainda sem conferência em campo. Cheque antes de fechar o fim de semana.</span></div>'
+          : '')
+    + '</div></div></div>'
+  + '</article>';
 }
 
-function desenhaLista(){
-  var el = $("#lista");
+function desenhaAcervo(){
+  var el = $("#acervo");
   if(!visiveis.length){
-    el.innerHTML = '<div class="vazio"><p>Nada nessa faixa.</p><span>Solte a régua de altitude ou tire um filtro.</span></div>';
+    el.innerHTML = '<div class="vazio"><b>Nenhum morro aqui</b><span>Tire um filtro ou busque por outro município.</span></div>';
     return;
   }
-  el.innerHTML = visiveis.map(fichaHTML).join("");
-  if(selecionado && document.getElementById("f-"+selecionado)) marcaAberta(selecionado);
+  el.innerHTML = visiveis.map(cardHTML).join("");
+  if(aberto && document.getElementById("m-"+aberto)) marcaAberto(aberto);
 }
 
-function marcaAberta(id){
-  var f = document.getElementById("f-"+id);
-  if(!f) return;
-  f.classList.add("aberta");
-  f.querySelector(".ficha-topo").setAttribute("aria-expanded","true");
+function marcaAberto(id){
+  var c = document.getElementById("m-"+id);
+  if(!c) return;
+  c.classList.add("ativo");
+  c.querySelector(".morro-cima").setAttribute("aria-expanded","true");
 }
 
-function abrir(id, rolar){
-  var jaAberto = selecionado === id;
-  $$(".ficha.aberta").forEach(function(f){
-    f.classList.remove("aberta");
-    f.querySelector(".ficha-topo").setAttribute("aria-expanded","false");
+function abrir(id, doMapa){
+  var mesmo = aberto === id;
+  $$(".morro.ativo").forEach(function(c){
+    c.classList.remove("ativo");
+    c.querySelector(".morro-cima").setAttribute("aria-expanded","false");
   });
-  $$(".ponto.sel").forEach(function(p){ p.classList.remove("sel"); });
-
-  if(jaAberto && !rolar){ selecionado = null; return; }
-  selecionado = id;
-  marcaAberta(id);
-  var p = document.querySelector('.ponto[data-id="'+id+'"]');
-  if(p) p.classList.add("sel");
+  if(mesmo && !doMapa){ aberto = null; return; }
+  aberto = id;
+  marcaAberto(id);
 
   var m = TODOS.filter(function(x){ return x.id === id; })[0];
   if(m && mapa){
-    mapa.flyTo([m.lat, m.lon], Math.max(mapa.getZoom(), 10), {duration:.7});
+    mapa.flyTo([m.lat,m.lon], Math.max(mapa.getZoom(),10), {duration:.7});
     if(marcas[id]) marcas[id].openPopup();
   }
-  if(rolar){
-    var f = document.getElementById("f-"+id);
-    if(f) f.scrollIntoView({block:"center", behavior:"smooth"});
+  if(doMapa){
+    var c = document.getElementById("m-"+id);
+    if(c) c.scrollIntoView({block:"center",behavior:"smooth"});
   }
 }
 
-/* ---------------- mapa ---------------- */
+/* ---------- mapa ---------- */
 function montaMapa(){
   if(typeof L === "undefined"){
-    mapa = null;
-    $("#mapa").innerHTML = '<div class="vazio" style="height:100%;display:flex;flex-direction:column;justify-content:center">'
-      + '<p>Mapa fora do ar.</p><span>A biblioteca de mapas não carregou. A lista abaixo continua funcionando.</span></div>';
+    $("#mapa").innerHTML = '<div class="vazio" style="height:100%;display:flex;flex-direction:column;justify-content:center;border:none"><b>Mapa fora do ar</b><span>A biblioteca não carregou. A lista continua funcionando.</span></div>';
     return;
   }
-  mapa = L.map("mapa", {zoomControl:true, scrollWheelZoom:false}).setView([-27.5,-50.5], 6);
+  mapa = L.map("mapa",{zoomControl:true,scrollWheelZoom:false}).setView([-27.5,-50.5],6);
   camadaTopo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
     maxZoom:16, attribution:'© OpenStreetMap · SRTM · <a href="https://opentopomap.org">OpenTopoMap</a>'
   }).addTo(mapa);
@@ -786,51 +643,50 @@ function desenhaMarcas(){
   Object.keys(marcas).forEach(function(k){ mapa.removeLayer(marcas[k]); });
   marcas = {};
   visiveis.forEach(function(m){
+    var cama = CAMA[m.acampamento] || CAMA.verificar;
     var mk = L.circleMarker([m.lat,m.lon],{
-      radius: 4 + (m.altitude/1900)*7,
-      fillColor: cor(m.altitude),
-      color: "#141C1A", weight: 1.5, opacity: 1, fillOpacity: .92
+      radius: cama.alto ? 7 : 5,
+      fillColor: cama.alto ? "#F2600C" : "#0F1C22",
+      color:"#fff", weight:2, opacity:1, fillOpacity: cama.alto ? 1 : .55
     }).addTo(mapa);
-    mk.bindPopup(
-      '<div class="pop-cota">'+m.altitude+' m · nível '+m.dificuldade+'</div>'
-      + '<div class="pop-nome">'+esc(m.nome)+'</div>'
-      + '<div class="pop-onde">'+esc(m.municipios.join(", "))+' · '+m.estado+'</div>'
-      + '<div class="pop-ver">'+ACAMP[m.acampamento].txt+'</div>'
-    );
+    mk.bindPopup('<div class="pop"><b>'+esc(m.nome)+'</b>'
+      + '<i>'+esc(m.municipios.join(", "))+' · '+m.estado+' · '+num(m.altitude)+' m</i>'
+      + '<u>'+cama.curto+'</u></div>');
     mk.on("click", function(){ abrir(m.id, true); });
     marcas[m.id] = mk;
   });
 }
 
-/* ---------------- eventos ---------------- */
-function toast(txt){
-  var t = $("#toast");
-  t.textContent = txt; t.classList.add("on");
-  clearTimeout(t._i); t._i = setTimeout(function(){ t.classList.remove("on"); }, 1600);
+/* ---------- eventos ---------- */
+function aviso(txt){
+  var a = $("#aviso");
+  a.textContent = txt; a.classList.add("on");
+  clearTimeout(a._t); a._t = setTimeout(function(){ a.classList.remove("on"); }, 1700);
 }
 
 document.addEventListener("click", function(e){
   var b;
-  if((b = e.target.closest("[data-abre]"))) { abrir(b.dataset.abre, false); return; }
+  if((b = e.target.closest("[data-abre]"))){ abrir(b.dataset.abre,false); return; }
   if((b = e.target.closest("[data-copia]"))){
-    navigator.clipboard.writeText(b.dataset.copia).then(function(){ toast("Coordenadas copiadas"); },
-      function(){ toast("Não deu para copiar"); });
-    return;
-  }
-  if((b = e.target.closest("[data-mapa]"))){
-    document.querySelector(".painel-mapa").scrollIntoView({block:"center",behavior:"smooth"});
+    navigator.clipboard.writeText(b.dataset.copia)
+      .then(function(){ aviso("Coordenadas copiadas"); }, function(){ aviso("Não deu para copiar"); });
     return;
   }
   if((b = e.target.closest("[data-uf]"))){
     var uf = b.dataset.uf, i = filtro.ufs.indexOf(uf);
     if(i < 0) filtro.ufs.push(uf); else filtro.ufs.splice(i,1);
-    b.setAttribute("aria-pressed", i < 0 ? "true" : "false");
+    b.setAttribute("aria-pressed", i < 0 ? "true":"false");
     aplica(); return;
   }
-  if((b = e.target.closest("[data-acamp]"))){
-    var v = b.dataset.acamp;
-    filtro.acamp = filtro.acamp === v ? "" : v;
-    $$("[data-acamp]").forEach(function(x){ x.setAttribute("aria-pressed", x.dataset.acamp === filtro.acamp ? "true":"false"); });
+  if((b = e.target.closest("[data-cama]"))){
+    var v = b.dataset.cama;
+    filtro.cama = filtro.cama === v ? "" : v;
+    $$("[data-cama]").forEach(function(x){ x.setAttribute("aria-pressed", x.dataset.cama === filtro.cama ? "true":"false"); });
+    aplica(); return;
+  }
+  if((b = e.target.closest("[data-agua]"))){
+    filtro.agua = !filtro.agua;
+    b.setAttribute("aria-pressed", filtro.agua ? "true":"false");
     aplica(); return;
   }
   if((b = e.target.closest("[data-camada]"))){
@@ -844,21 +700,19 @@ document.addEventListener("click", function(e){
 });
 
 $("#busca").addEventListener("input", function(e){ filtro.texto = e.target.value; aplica(); });
-$("#grau").addEventListener("change", function(e){ filtro.grau = +e.target.value; aplica(); });
+$("#nivel").addEventListener("change", function(e){ filtro.nivel = +e.target.value; aplica(); });
 $("#ordem").addEventListener("change", function(e){ filtro.ordem = e.target.value; aplica(); });
-$("#limpar").addEventListener("click", function(){
-  filtro = {texto:"", ufs:[], acamp:"", grau:5, min:300, max:1950, ordem:"alt-desc"};
-  $("#busca").value = ""; $("#grau").value = "5"; $("#ordem").value = "alt-desc";
-  $$("[data-uf],[data-acamp]").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
-  desenhaPuxadores(); aplica();
+$("#zerar").addEventListener("click", function(){
+  filtro = {texto:"",ufs:[],cama:"",agua:false,nivel:5,ordem:"alt-desc"};
+  $("#busca").value = ""; $("#nivel").value = "5"; $("#ordem").value = "alt-desc";
+  $$("[data-uf],[data-cama],[data-agua]").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+  aplica();
 });
 
-/* ---------------- início ---------------- */
+/* ---------- início ---------- */
 if(!TODOS.length){
-  $("#lista").innerHTML = '<div class="vazio"><p>Os dados não carregaram.</p><span>Confira se dados.js está na mesma pasta do index.html.</span></div>';
+  $("#acervo").innerHTML = '<div class="vazio"><b>Os dados não carregaram</b><span>Confira se dados.js está na mesma pasta do index.html e se o build.py rodou.</span></div>';
 } else {
-  montaCabeca();
-  montaPerfil();
   montaMapa();
   aplica();
 }

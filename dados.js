@@ -1115,4 +1115,48 @@ window.MORROS_SUL = {
    "confianca": "alta"
   }
  ]
+ [
+  {
+    "id": "sc-santo-anjo",
+    "nome": "Morro do Santo Anjo",
+    "estado": "SC",
+    "municipios": ["Massaranduba"],
+    "regiao": "Vale do Itapocu",
+    "altitude": 830,
+    "lat": -26.5583,
+    "lon": -49.0472,
+    "tipo": "morro",
+    "dificuldade": 1,
+    "trilha_km": 0.8,
+    "tempo_h": 0.5,
+    "ganho_m": 120,
+    "acampamento": "cume",
+    "agua": "nenhuma",
+    "acesso": "Localidade Alto Guarani, a cerca de 15 km do centro de Massaranduba. Acesso gratuito e aberto o ano todo. A estrada é de paralelepípedo no trecho mais sinuoso: carro de passeio chega, mas exige mão firme nas curvas. Do estacionamento até o alto são uns 20 minutos de subida curta e íngreme, dá para subir com a mochila cargueira nas costas.",
+    "epoca": "O ano todo",
+    "nota": "Um dos morros mais campados do norte de SC, e por bons motivos: vista de 360 graus, capela no ponto mais alto, e o alinhamento com Barra Velha faz com que dê para ver o nascer e o pôr do sol no mesmo lugar. Não há água nenhuma no alto: suba com tudo o que vai beber e cozinhar. O tempo vira rápido ali, mesmo em dia limpo na chegada.",
+    "confianca": "media"
+  },
+  {
+    "id": "sc-monte-crista",
+    "nome": "Monte Crista",
+    "estado": "SC",
+    "municipios": ["Garuva"],
+    "regiao": "Serra do Mar catarinense",
+    "altitude": 927,
+    "lat": -26.0583,
+    "lon": -48.9083,
+    "tipo": "morro",
+    "dificuldade": 3,
+    "trilha_km": 9,
+    "tempo_h": 5,
+    "ganho_m": 850,
+    "acampamento": "cume",
+    "agua": "percurso",
+    "acesso": "Saída da BR-101 em Garuva por estrada de terra sinalizada com um monumento de concreto, mais uns 2 km entre bananais até o estacionamento, dentro de propriedade particular. Cobra-se entrada por veículo e por pessoa. Há banheiro e um bar pequeno na recepção. A trilha começa numa ponte pênsil sobre o Rio Três Barras.",
+    "epoca": "Março a novembro",
+    "nota": "A montanha mais procurada da região de Joinville. A subida é pelo Caminho dos Ambrósios, remanescente do Peabiru, com trechos de escadaria de pedra ainda em pé. Não é técnica: é resistência, subida íngreme e constante. Atenção ao ponto de acampar: o melhor lugar não é o cume, é um marco um pouco abaixo, protegido do vento. Quem arma no topo passa a noite levando pancada. A temperatura despenca depois do escurecer, leve saco de dormir de verdade. Há pontos de água na trilha, incluindo cachoeiras.",
+    "confianca": "media"
+  }
+]
 };
