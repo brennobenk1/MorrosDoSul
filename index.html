@@ -7,7 +7,7 @@
 <meta name="description" content="Catálogo aberto de elevações acima de 500 metros no Paraná, Santa Catarina e Rio Grande do Sul, com informação de trilha, água e acampamento.">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.Default.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -913,8 +913,13 @@ function desenhaMarcas(){
   if(grupoMarcas) mapa.removeLayer(grupoMarcas);
   marcas = {};
 
-  var agrupavel = typeof L.markerClusterGroup === "function";
-  grupoMarcas = agrupavel
+  /* Agrupar só compensa com muitos pontos. Com algumas dezenas de morros o cluster
+     esconde informação e ainda faz o mapa depender de uma biblioteca a mais — que,
+     se não carregar, levaria o mapa junto. Abaixo do limite, marcador simples. */
+  var LIMITE_CLUSTER = 300;
+  var agrupar = visiveis.length > LIMITE_CLUSTER
+                && typeof L.markerClusterGroup === "function";
+  grupoMarcas = agrupar
     ? L.markerClusterGroup({maxClusterRadius:46, spiderfyOnMaxZoom:true, chunkedLoading:true})
     : L.layerGroup();
 
