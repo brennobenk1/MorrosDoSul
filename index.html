@@ -168,7 +168,7 @@ select.chip option{background:var(--basalto-2);color:var(--osso)}
 /* ---------- corpo ---------- */
 .corpo{
   display:grid;
-  grid-template-columns:96px minmax(330px,1fr) 1.05fr;
+  grid-template-columns:96px minmax(330px,1fr) var(--col-mapa,1.05fr);
   gap:clamp(16px,2vw,28px);
   padding-block:clamp(18px,3vw,32px) 60px;
   align-items:start;
@@ -306,6 +306,44 @@ select.chip option{background:var(--basalto-2);color:var(--osso)}
 
 /* ---------- mapa ---------- */
 .painel-mapa{position:sticky;top:74px}
+
+/* alça de redimensionar: canto inferior esquerdo do mapa.
+   Puxar para baixo aumenta a altura; para a esquerda, a largura —
+   o mapa é a última coluna, então ele só tem folga para crescer nesse sentido. */
+.pega-mapa{
+  position:absolute;left:-1px;bottom:-1px;width:20px;height:20px;
+  cursor:nesw-resize;touch-action:none;z-index:500;
+  display:grid;place-items:center;
+  background:linear-gradient(45deg,var(--basalto-2) 50%,transparent 50%);
+  border-left:1px solid var(--linha);border-bottom:1px solid var(--linha);
+  border-bottom-left-radius:var(--raio);
+}
+.pega-mapa::before{
+  content:"";width:9px;height:9px;margin:2px 0 0 2px;
+  background:
+    linear-gradient(45deg,transparent 42%,var(--osso-3) 42%,var(--osso-3) 54%,transparent 54%),
+    linear-gradient(45deg,transparent 72%,var(--osso-3) 72%,var(--osso-3) 84%,transparent 84%);
+}
+.pega-mapa:hover::before,.pega-mapa:focus-visible::before{
+  background:
+    linear-gradient(45deg,transparent 42%,var(--ambar) 42%,var(--ambar) 54%,transparent 54%),
+    linear-gradient(45deg,transparent 72%,var(--ambar) 72%,var(--ambar) 84%,transparent 84%);
+}
+body.redimensionando{cursor:nesw-resize;user-select:none}
+body.redimensionando .leaflet-container{pointer-events:none}
+
+/* popup de um ponto qualquer do mapa */
+.pop-ponto-rot{font-family:var(--dado);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3)}
+.pop-coord{font-family:var(--dado);font-size:15px;margin:3px 0 2px;letter-spacing:-.01em}
+.pop-perto{font-size:12.5px;color:var(--osso-2);margin-top:7px}
+.pop-perto b{font-weight:600;color:var(--osso)}
+.pop-acoes{display:flex;gap:6px;margin-top:11px;padding-top:10px;border-top:1px solid var(--linha)}
+.pop-acoes button,.pop-acoes a{
+  flex:1;text-align:center;font-family:var(--dado);font-size:10.5px;letter-spacing:.04em;
+  padding:6px 8px;border:1px solid var(--linha);border-radius:var(--raio);
+  color:var(--osso-2);text-decoration:none;transition:.15s;white-space:nowrap;
+}
+.pop-acoes button:hover,.pop-acoes a:hover{border-color:var(--ambar);color:var(--ambar)}
 .mapa-cab{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
 .mapa-cab span{font-family:var(--dado);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--osso-3)}
 .camadas{display:flex;gap:4px}
@@ -351,6 +389,7 @@ select.chip option{background:var(--basalto-2);color:var(--osso)}
   .corpo{grid-template-columns:76px 1fr;grid-template-areas:"mapa mapa" "perfil lista"}
   .painel-mapa{grid-area:mapa;position:static}
   #mapa{height:320px;min-height:0}
+  .corpo{--col-mapa:auto}
   .perfil{grid-area:perfil;position:sticky;top:120px;height:calc(100vh - 160px)}
   .lista-area{grid-area:lista}
 }
@@ -500,6 +539,9 @@ select.chip option{background:var(--basalto-2);color:var(--osso)}
       </div>
     </div>
     <div id="mapa"></div>
+    <div class="pega-mapa" id="pegaMapa" role="separator" tabindex="0"
+         aria-label="Redimensionar o mapa. Use as setas do teclado."
+         title="Puxe para redimensionar · duplo clique para restaurar"></div>
   </section>
 </main>
 
@@ -902,8 +944,157 @@ function montaMapa(){
     if(botao) botao.textContent = "mapa base";
     toast("Relevo fora do ar — usando o mapa padrão");
   });
-  mapa.on("click", function(){ mapa.scrollWheelZoom.enable(); });
+  mapa.on("click", function(e){
+    mapa.scrollWheelZoom.enable();
+    /* No Leaflet o clique num marcador sobe até o mapa. Sem esta guarda, o popup
+       do morro seria trocado pelo de coordenada no mesmo clique. */
+    var alvo = e.originalEvent && e.originalEvent.target;
+    if(alvo && alvo.closest && alvo.closest(".leaflet-interactive, .leaflet-popup")) return;
+    abrePonto(e.latlng);
+  });
   mapa.on("mouseout", function(){ mapa.scrollWheelZoom.disable(); });
+
+  ligaRedimensionar();
+}
+
+/* ---------------- ponto avulso no mapa ---------------- */
+function distanciaKm(la1,lo1,la2,lo2){
+  var R = 6371, r = Math.PI/180;
+  var dla = (la2-la1)*r, dlo = (lo2-lo1)*r;
+  var a = Math.sin(dla/2)*Math.sin(dla/2)
+        + Math.cos(la1*r)*Math.cos(la2*r)*Math.sin(dlo/2)*Math.sin(dlo/2);
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+
+function maisPerto(lat, lon){
+  var melhor = null, menor = Infinity;
+  TODOS.forEach(function(m){
+    var d = distanciaKm(lat, lon, m.lat, m.lon);
+    if(d < menor){ menor = d; melhor = m; }
+  });
+  return melhor ? {morro:melhor, km:menor} : null;
+}
+
+var popPonto = null;
+function abrePonto(latlng){
+  var lat = latlng.lat, lon = latlng.lng;
+  var coord = lat.toFixed(5) + ", " + lon.toFixed(5);
+  var perto = maisPerto(lat, lon);
+
+  var html = '<div class="pop-ponto-rot">Ponto no mapa</div>'
+    + '<div class="pop-coord">' + coord + '</div>';
+
+  if(perto){
+    var d = perto.km < 1
+      ? Math.round(perto.km*1000) + " m"
+      : perto.km.toFixed(1).replace(".", ",") + " km";
+    html += '<div class="pop-perto">Mais perto no catálogo: <b>' + esc(perto.morro.nome)
+          + '</b>, a ' + d + '</div>';
+  }
+
+  html += '<div class="pop-acoes">'
+    + '<button data-copia="' + coord + '">copiar</button>'
+    + '<a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='
+      + lat.toFixed(6) + ',' + lon.toFixed(6) + '">Google Maps</a>'
+    + '<a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination='
+      + lat.toFixed(6) + ',' + lon.toFixed(6) + '">como chegar</a>'
+    + '</div>';
+
+  popPonto = L.popup({maxWidth:280, autoPan:false})
+    .setLatLng(latlng).setContent(html).openOn(mapa);
+}
+
+/* ---------------- redimensionar o mapa ---------------- */
+var ALT_MIN = 260, LARG_MIN = 320;
+
+function guardaTamanho(altura, largura){
+  try{
+    localStorage.setItem("mapa-tamanho", JSON.stringify({a:altura, l:largura}));
+  }catch(e){ /* modo privado ou storage bloqueado: só não persiste */ }
+}
+
+function aplicaTamanho(altura, largura){
+  var corpo = document.querySelector(".corpo");
+  if(altura) $("#mapa").style.height = altura + "px";
+  if(largura && window.innerWidth > 1080) corpo.style.setProperty("--col-mapa", largura + "px");
+  if(mapa) mapa.invalidateSize();
+}
+
+function restauraTamanho(){
+  $("#mapa").style.height = "";
+  document.querySelector(".corpo").style.removeProperty("--col-mapa");
+  try{ localStorage.removeItem("mapa-tamanho"); }catch(e){}
+  if(mapa) mapa.invalidateSize();
+  toast("Tamanho do mapa restaurado");
+}
+
+function ligaRedimensionar(){
+  var pega = $("#pegaMapa"), el = $("#mapa"), corpo = document.querySelector(".corpo");
+  if(!pega || !el) return;
+
+  try{
+    var salvo = JSON.parse(localStorage.getItem("mapa-tamanho") || "null");
+    if(salvo) aplicaTamanho(salvo.a, salvo.l);
+  }catch(e){}
+
+  var arrastando = false, x0 = 0, y0 = 0, a0 = 0, l0 = 0;
+  var limiteLargura = function(){
+    return Math.max(LARG_MIN, corpo.getBoundingClientRect().width * 0.72);
+  };
+
+  pega.addEventListener("pointerdown", function(e){
+    arrastando = true;
+    x0 = e.clientX; y0 = e.clientY;
+    a0 = el.getBoundingClientRect().height;
+    l0 = $(".painel-mapa").getBoundingClientRect().width;
+    pega.setPointerCapture(e.pointerId);
+    document.body.classList.add("redimensionando");
+    e.preventDefault();
+  });
+
+  pega.addEventListener("pointermove", function(e){
+    if(!arrastando) return;
+    /* alça no canto inferior esquerdo: para baixo cresce em altura,
+       para a esquerda cresce em largura (o mapa é a última coluna). */
+    var altura  = Math.max(ALT_MIN, a0 + (e.clientY - y0));
+    var largura = Math.min(limiteLargura(), Math.max(LARG_MIN, l0 + (x0 - e.clientX)));
+    aplicaTamanho(altura, largura);
+  });
+
+  function solta(e){
+    if(!arrastando) return;
+    arrastando = false;
+    document.body.classList.remove("redimensionando");
+    try{ pega.releasePointerCapture(e.pointerId); }catch(err){}
+    guardaTamanho(el.getBoundingClientRect().height,
+                  $(".painel-mapa").getBoundingClientRect().width);
+  }
+  pega.addEventListener("pointerup", solta);
+  pega.addEventListener("pointercancel", solta);
+
+  pega.addEventListener("dblclick", restauraTamanho);
+
+  pega.addEventListener("keydown", function(e){
+    var passo = e.shiftKey ? 60 : 20;
+    var altura = el.getBoundingClientRect().height;
+    var largura = $(".painel-mapa").getBoundingClientRect().width;
+    if(e.key === "ArrowDown") altura += passo;
+    else if(e.key === "ArrowUp") altura -= passo;
+    else if(e.key === "ArrowLeft") largura += passo;
+    else if(e.key === "ArrowRight") largura -= passo;
+    else if(e.key === "Home" || e.key === "Escape"){ e.preventDefault(); restauraTamanho(); return; }
+    else return;
+    e.preventDefault();
+    altura = Math.max(ALT_MIN, altura);
+    largura = Math.min(limiteLargura(), Math.max(LARG_MIN, largura));
+    aplicaTamanho(altura, largura);
+    guardaTamanho(altura, largura);
+  });
+
+  /* qualquer mudança de tamanho precisa avisar o Leaflet, senão os tiles ficam cortados */
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){ if(mapa) mapa.invalidateSize(); }).observe(el);
+  }
 }
 
 var grupoMarcas = null;
