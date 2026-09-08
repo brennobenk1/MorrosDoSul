@@ -1,4 +1,4 @@
-/* gerado por build.py — edite dados/morros_sul.json, não este arquivo */
+/* gerado por build.py — edite os JSON em dados/, não este arquivo */
 window.MORROS_SUL = {
  "metadata": {
   "projeto": "Acima de 300",
@@ -25,7 +25,10 @@ window.MORROS_SUL = {
    "camping": "Camping estruturado, com banheiro e água",
    "proibido": "Pernoite não permitido",
    "verificar": "Sem informação confirmada"
-  }
+  },
+  "total": 47,
+  "com_ficha": 47,
+  "mapeados": 0
  },
  "morros": [
   {
@@ -49,7 +52,8 @@ window.MORROS_SUL = {
    "acesso": "Estrada de terra até a Fazenda Pico Paraná, em Campina Grande do Sul. Estacionamento pago e vigiado, com banheiro e área de camping na entrada.",
    "epoca": "Abril a setembro, quando o tempo fica mais seco e firme",
    "nota": "O cume mais alto do Sul do Brasil e a subida mais cobiçada do Paraná. A maioria dorme no meio da trilha e ataca o cume de manhã cedo. O trecho final tem correntes e exige cabeça fria.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "pr-caratuva",
@@ -72,7 +76,8 @@ window.MORROS_SUL = {
    "acesso": "Mesma partida do Pico Paraná, pelas fazendas de Campina Grande do Sul.",
    "epoca": "Abril a setembro",
    "nota": "Segunda montanha mais alta do Sul e vizinha do Pico Paraná. O cume é tomado por caratuva, o bambu anão que dá nome à montanha, e tem antenas de rádio visíveis de longe.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "sc-boa-vista",
@@ -96,7 +101,8 @@ window.MORROS_SUL = {
    "acesso": "Acesso mais usado pela Trilha dos Índios, saindo de Anitápolis. A estrada até o início da trilha está em boas condições e vai de carro de passeio. Parte do percurso cruza propriedades particulares.",
    "epoca": "Outubro a abril para noites menos severas; junho a agosto para geada e chance de neve",
    "nota": "Ponto mais alto de Santa Catarina, medido em 1.823,59 m por um levantamento do IFSC. É um planalto de campo aberto, ótimo para armar barraca, mas o frio no alto é sério e o vento não dá trégua.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "sc-morro-igreja",
@@ -119,7 +125,8 @@ window.MORROS_SUL = {
    "acesso": "Estrada até o alto, a 29 km do centro de Urubici. A visitação tem horário controlado porque o local abriga uma base da Aeronáutica com o radar do CINDACTA II.",
    "epoca": "Junho a agosto para geada e sincelo",
    "nota": "Ponto habitado mais alto do Sul do Brasil e mirante da Pedra Furada. Não dá para dormir aqui, mas serve de base de dia: há campings e pousadas em Urubici.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "pr-itapiroca",
@@ -142,7 +149,8 @@ window.MORROS_SUL = {
    "acesso": "Parte da trilha principal do Pico Paraná, pelas fazendas de Campina Grande do Sul.",
    "epoca": "Abril a setembro",
    "nota": "Terceira do estado e a mais curta do circuito dos três cumes. Tem boas áreas de acampamento e vista para Tucum, Camapuã e Ciririca.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "sc-guizoni",
@@ -165,7 +173,8 @@ window.MORROS_SUL = {
    "acesso": "Mesma região do Morro da Boa Vista, por estradas rurais de Bom Retiro.",
    "epoca": "Outubro a abril",
    "nota": "Terceiro ponto mais alto do estado e quase sempre vazio. Campo limpo no topo e horizonte aberto para o Campo dos Padres.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "sc-morro-preto",
@@ -188,7 +197,8 @@ window.MORROS_SUL = {
    "acesso": "Fica a 2,9 km do Morro da Igreja, por campo aberto e estradas de fazenda.",
    "epoca": "Outubro a abril",
    "nota": "Ficou fora das listas oficiais por muito tempo e por isso quase não recebe visita. Terreno particular: peça autorização na propriedade.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "sc-convento-padres",
@@ -211,7 +221,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais de Bom Retiro, mesma região do Campo dos Padres.",
    "epoca": "Outubro a abril",
    "nota": "Grande planalto a cerca de 1.790 m, com pastagem e araucárias esparsas. Espaço de sobra para barraca, desde que o proprietário libere.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "pr-ciririca",
@@ -234,7 +245,8 @@ window.MORROS_SUL = {
    "acesso": "Acesso longo pela Serra do Ibitiraquire. Vá com guia: a rota tem trechos expostos e é fácil se perder.",
    "epoca": "Abril a setembro",
    "nota": "Fama de ser a montanha mais dura do Paraná. Placas de rocha lisa no trecho final e pouca gente na trilha mesmo em feriado.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "pr-ferraria",
@@ -257,7 +269,8 @@ window.MORROS_SUL = {
    "acesso": "A rota clássica pela Picada do Cristóvão está fechada. O acesso atual sai da Fazenda Pico Paraná e contorna as encostas do Caratuva.",
    "epoca": "Abril a setembro",
    "nota": "Confirme o acesso antes de ir: as autorizações de passagem por aqui mudam de tempos em tempos.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "pr-tucum",
@@ -281,7 +294,8 @@ window.MORROS_SUL = {
    "acesso": "Trilha convencional passa pelo Camacuã e atravessa o topo descampado do Camapuã.",
    "epoca": "Abril a setembro",
    "nota": "Pouco visitado para o tamanho da vista. Um dos melhores lugares da Serra do Mar para ver o nascer do sol sem fila.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "pr-capivari-grande",
@@ -304,7 +318,8 @@ window.MORROS_SUL = {
    "acesso": "Bloco isolado ao norte do Ibitiraquire. Acesso por estradas rurais e propriedades particulares.",
    "epoca": "Abril a setembro",
    "nota": "Conjunto pouco frequentado, com cumes entre 1.640 e 1.676 m. Confirme a passagem com os proprietários antes de subir.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "sc-quiriri",
@@ -328,7 +343,8 @@ window.MORROS_SUL = {
    "acesso": "Estrada de terra a partir de Campo Alegre, no norte do estado.",
    "epoca": "Março a novembro",
    "nota": "Conjunto com cerca de 30 cumes entre 1.300 e 1.580 m. Do alto dá para ver Joinville e o mar em dia limpo. Campos de altitude com bons pontos para barraca.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "pr-morro-leao",
@@ -351,7 +367,8 @@ window.MORROS_SUL = {
    "acesso": "Acesso por estrada de terra a partir de Piraquara, em área de mananciais com restrição de entrada.",
    "epoca": "Abril a setembro",
    "nota": "Ponto culminante da Serra do Leão, entre a Graciosa e o Marumbi. Área de proteção de mananciais: confirme se a visitação está liberada.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "pr-olimpo-marumbi",
@@ -374,7 +391,8 @@ window.MORROS_SUL = {
    "acesso": "Parque Estadual Pico do Marumbi. Chega-se de trem pela Estrada de Ferro Curitiba–Paranaguá ou por estrada de terra até a Estação Marumbi.",
    "epoca": "O ano todo, evitando dias de chuva na rocha",
    "nota": "Cume mais alto do Conjunto Marumbi. O camping fica na sede do parque, na base, e o ataque ao cume é feito no dia. Registre a entrada e a saída na portaria.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "sc-corvo-branco",
@@ -398,7 +416,8 @@ window.MORROS_SUL = {
    "acesso": "Pela Serra do Corvo Branco, estrada de terra com paredões cortados na rocha. Trecho fecha em dias de chuva forte.",
    "epoca": "Março a novembro",
    "nota": "O corte da serra é uma das paisagens mais fotografadas de SC. Há campings e áreas de pernoite na base, do lado de Urubici.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "pr-mae-catira",
@@ -421,7 +440,8 @@ window.MORROS_SUL = {
    "acesso": "Partida próxima à Estrada da Graciosa, em Quatro Barras.",
    "epoca": "O ano todo",
    "nota": "Bloco da Serra da Graciosa, na mesma faixa do Alto da Graciosa. Boa opção de fim de semana curto saindo de Curitiba.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "pr-anhangava",
@@ -444,7 +464,8 @@ window.MORROS_SUL = {
    "acesso": "Estrada asfaltada até a base, em Quatro Barras, a menos de uma hora de Curitiba.",
    "epoca": "O ano todo",
    "nota": "A montanha mais acessível do Paraná e escola de escalada da região. Cume de rocha limpa com vista para Curitiba. Suba com toda a água do dia: não há fonte no caminho.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "sc-rio-do-rastro",
@@ -467,7 +488,8 @@ window.MORROS_SUL = {
    "acesso": "Pela SC-390, asfaltada, com estacionamento no alto. Entrada gratuita.",
    "epoca": "O ano todo, com mais chance de céu limpo no inverno",
    "nota": "O mirante fica no topo da serra, com 1.200 m de desnível até a planície. Não é ponto de acampamento, mas os campings de Bom Jardim da Serra ficam a poucos quilômetros.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "rs-monte-negro",
@@ -490,7 +512,8 @@ window.MORROS_SUL = {
    "acesso": "Estrada municipal Silveira, de saibro e chão batido, a 45 km do centro de São José dos Ausentes. Dá para chegar de carro até o estacionamento na base; o caminho passa dentro de uma fazenda.",
    "epoca": "O ano todo. Suba de manhã para escapar da viração, a nuvem espessa que sobe do litoral e fecha o cânion",
    "nota": "Ponto mais alto e mais frio do Rio Grande do Sul, na borda do Cânion Monte Negro, que tem 700 m de profundidade. A subida final é íngreme e ventosa. As pousadas-fazenda da região recebem barraca.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "pr-morro-canal",
@@ -513,7 +536,8 @@ window.MORROS_SUL = {
    "acesso": "Partida pela região do Mananciais da Serra, em Piraquara, com controle de entrada.",
    "epoca": "O ano todo",
    "nota": "Trilha em mata fechada até um cume aberto sobre o vale. A entrada depende de autorização da área de mananciais.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-fortaleza",
@@ -537,7 +561,8 @@ window.MORROS_SUL = {
    "acesso": "Parque Nacional da Serra Geral, com entrada por Cambará do Sul. Ingresso e horário definidos pelo ICMBio.",
    "epoca": "Abril a setembro, quando o céu abre mais cedo",
    "nota": "Paredão de 900 m sobre a planície litorânea. Acampar dentro do parque não é permitido: os campings ficam na estrada de Cambará do Sul.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "sc-cambirela",
@@ -560,7 +585,8 @@ window.MORROS_SUL = {
    "acesso": "Partida em Palhoça, na Grande Florianópolis. Trilha dentro do Parque Estadual da Serra do Tabuleiro.",
    "epoca": "Março a novembro",
    "nota": "Subida direta do nível do mar até mil metros, sem alívio. O cume tem lajes de granito com vista para a baía e para a ilha de Florianópolis. Confirme as regras de pernoite com a administração do parque.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "sc-pedra-branca",
@@ -583,7 +609,8 @@ window.MORROS_SUL = {
    "acesso": "Mesma região do Cambirela, com trilhas que saem de Palhoça.",
    "epoca": "Março a novembro",
    "nota": "Domo de granito claro visível de boa parte da Grande Florianópolis. Trilha menos marcada que a do Cambirela.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-morro-sete-lagoas",
@@ -606,7 +633,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais na localidade de Morrinhos, em Barão do Triunfo.",
    "epoca": "Março a novembro",
    "nota": "Um dos pontos mais altos fora da Serra Geral no RS. Região de campo e mata, com acesso por propriedades particulares.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-morro-grande-rolante",
@@ -629,7 +657,8 @@ window.MORROS_SUL = {
    "acesso": "Subida pela face oeste a partir da área de pouso de voo livre, a 62 m de altitude. São 12 km de percurso.",
    "epoca": "Março a novembro",
    "nota": "Rampa de voo livre com vista para o vale do Rolante. O desnível de 770 m faz dela uma das subidas mais longas do estado.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "rs-cantagalo",
@@ -652,7 +681,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais de Rolante, na encosta da serra.",
    "epoca": "Março a novembro",
    "nota": "Vizinho do Morro Grande, com perfil parecido e menos gente. Terreno particular na maior parte do trajeto.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "sc-morro-bau",
@@ -675,7 +705,8 @@ window.MORROS_SUL = {
    "acesso": "Estrada até a Reserva Biológica Morro do Baú, em Ilhota, entre Blumenau e Itajaí.",
    "epoca": "O ano todo",
    "nota": "Rocha em forma de baú visível do vale inteiro. Área de reserva com regras próprias de visitação: pernoite só nas áreas autorizadas na base.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-serra-do-pinto",
@@ -698,7 +729,8 @@ window.MORROS_SUL = {
    "acesso": "Subida pela RS-486, a Rota do Sol, a partir de Santana (137 m) até o topo da serra.",
    "epoca": "Março a novembro",
    "nota": "Ganho de 670 m ao longo da estrada, com mirante no alto. Bom trajeto para quem quer altitude sem trilha técnica.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "rs-ferrabraz",
@@ -721,7 +753,8 @@ window.MORROS_SUL = {
    "acesso": "Da pista de pouso na estrada do Carlão até a rampa sudeste, 4,2 km de percurso.",
    "epoca": "O ano todo",
    "nota": "Um dos pontos de voo livre mais conhecidos do estado, a uma hora de Porto Alegre. Estrutura de apoio na rampa e campings na base.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "rs-canastra",
@@ -744,7 +777,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais de Riozinho, no Vale do Paranhana.",
    "epoca": "Março a novembro",
    "nota": "Região de cachoeiras e mata atlântica preservada. Combine com o Morro da Pirâmide, a poucos quilômetros.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-piramide",
@@ -767,7 +801,8 @@ window.MORROS_SUL = {
    "acesso": "Acesso por Riozinho, no Vale do Paranhana.",
    "epoca": "Março a novembro",
    "nota": "Silhueta triangular que dá nome ao morro. Pouca informação de trilha disponível: vá com quem conhece.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-morro-agudo-caraa",
@@ -790,7 +825,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais de Caraá, entre Osório e Santo Antônio da Patrulha.",
    "epoca": "Março a novembro",
    "nota": "O mais alto entre os vários Morros Agudo do estado. Cume cônico com vista para a planície litorânea.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-morro-diabo",
@@ -813,7 +849,8 @@ window.MORROS_SUL = {
    "acesso": "Acesso por estradas vicinais de Caxias do Sul.",
    "epoca": "O ano todo",
    "nota": "Rampa usada por pilotos de parapente, com vista aberta para as planícies abaixo. Marco visual da região.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-cerro-partido",
@@ -836,7 +873,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais de São Jerônimo, na região carbonífera.",
    "epoca": "Março a novembro",
    "nota": "Campo aberto e afloramentos de granito. Região pouco explorada por trilheiros, com muitos cerros acima de 500 m.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-lohmann",
@@ -859,7 +897,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais de Roca Sales.",
    "epoca": "Março a novembro",
    "nota": "Ponto alto do Vale do Taquari, com vista para o rio e para as colônias alemãs da região.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-cerro-branco",
@@ -882,7 +921,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais no município de mesmo nome, perto de Candelária.",
    "epoca": "Março a novembro",
    "nota": "Fica de frente para o Botucaraí, na mesma faixa de altitude. Dá para encaixar os dois no mesmo fim de semana.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-botucarai",
@@ -905,7 +945,8 @@ window.MORROS_SUL = {
    "acesso": "Estrada de chão batido em boas condições, a 8 km do centro de Candelária, pela RSC-287. Estacione na clareira da capela, onde começa a trilha.",
    "epoca": "Tempo seco. Depois de chuva forte a subida fica escorregadia e perigosa",
    "nota": "O morro isolado mais alto do estado, com 569,63 m. Só 1,2 km de trilha, mas íngreme o suficiente para exigir joelhos e fôlego. Leve pelo menos dois litros de água: não há fonte no caminho.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "rs-morro-gaucho",
@@ -928,7 +969,8 @@ window.MORROS_SUL = {
    "acesso": "Acesso sinalizado a partir de Arroio do Meio, no Vale do Taquari.",
    "epoca": "O ano todo",
    "nota": "Mirante conhecido do vale, com rampa de voo livre e estrutura de apoio na base.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "sc-morro-lagoa",
@@ -951,7 +993,8 @@ window.MORROS_SUL = {
    "acesso": "Trilhas saindo do Córrego Grande e da Lagoa da Conceição, dentro do Parque Natural Municipal do Maciço da Costeira.",
    "epoca": "O ano todo",
    "nota": "Melhor pôr do sol urbano da ilha, com a lagoa de um lado e a baía do outro. Área de parque municipal: acampar não é permitido.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-borussia",
@@ -974,7 +1017,8 @@ window.MORROS_SUL = {
    "acesso": "Estrada do Morro da Borússia, saindo de Osório em direção à serra.",
    "epoca": "O ano todo",
    "nota": "Estrada cênica com cascatas e pousadas ao longo do caminho. Do alto dá para ver as lagoas do litoral norte e o parque eólico.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "rs-serra-erval",
@@ -997,7 +1041,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais de Barão do Triunfo.",
    "epoca": "Março a novembro",
    "nota": "Campos de cima do escudo, com afloramentos e mata ciliar. Área rural: combine a passagem com os moradores.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-morro-pelado-osorio",
@@ -1020,7 +1065,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas de terra na zona rural de Osório, perto do Morro da Borússia.",
    "epoca": "O ano todo",
    "nota": "Cume sem vegetação alta, formado em basalto, com vista de 360 graus sobre os vales e as cidades vizinhas. Bom lugar para pôr do sol.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-serra-lanceiros",
@@ -1043,7 +1089,8 @@ window.MORROS_SUL = {
    "acesso": "Estradas rurais de Caçapava do Sul, na mesma região da Pedra do Segredo.",
    "epoca": "O ano todo",
    "nota": "Nome ligado ao combate dos Porongos, na Farroupilha. Campo aberto, com pedra à mostra e horizonte largo.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-itacolomi",
@@ -1066,7 +1113,8 @@ window.MORROS_SUL = {
    "acesso": "Zona rural de Gravataí, a menos de uma hora de Porto Alegre.",
    "epoca": "O ano todo",
    "nota": "Silhueta reconhecível de quem passa pela BR-290. Opção de trilha curta perto da capital.",
-   "confianca": "media"
+   "confianca": "media",
+   "ficha": true
   },
   {
    "id": "rs-pedra-segredo",
@@ -1089,7 +1137,8 @@ window.MORROS_SUL = {
    "acesso": "A cerca de 280 km de Porto Alegre, por Caçapava do Sul. Acesso sinalizado, com área de visitação organizada.",
    "epoca": "O ano todo",
    "nota": "Bloco de granito equilibrado sobre uma base estreita, cercado de cavernas e outras formações. Tem camping estruturado no local e as Guaritas do Camaquã ficam perto.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   },
   {
    "id": "rs-morro-santana",
@@ -1112,51 +1161,8 @@ window.MORROS_SUL = {
    "acesso": "Trilhas partindo do campus do Vale da UFRGS e da zona leste de Porto Alegre.",
    "epoca": "O ano todo",
    "nota": "Ponto mais alto de Porto Alegre, com campo nativo e mata preservada. Área institucional da UFRGS: visitação de dia, sem pernoite.",
-   "confianca": "alta"
+   "confianca": "alta",
+   "ficha": true
   }
  ]
- [
-  {
-    "id": "sc-santo-anjo",
-    "nome": "Morro do Santo Anjo",
-    "estado": "SC",
-    "municipios": ["Massaranduba"],
-    "regiao": "Vale do Itapocu",
-    "altitude": 830,
-    "lat": -26.5583,
-    "lon": -49.0472,
-    "tipo": "morro",
-    "dificuldade": 1,
-    "trilha_km": 0.8,
-    "tempo_h": 0.5,
-    "ganho_m": 120,
-    "acampamento": "cume",
-    "agua": "nenhuma",
-    "acesso": "Localidade Alto Guarani, a cerca de 15 km do centro de Massaranduba. Acesso gratuito e aberto o ano todo. A estrada é de paralelepípedo no trecho mais sinuoso: carro de passeio chega, mas exige mão firme nas curvas. Do estacionamento até o alto são uns 20 minutos de subida curta e íngreme, dá para subir com a mochila cargueira nas costas.",
-    "epoca": "O ano todo",
-    "nota": "Um dos morros mais campados do norte de SC, e por bons motivos: vista de 360 graus, capela no ponto mais alto, e o alinhamento com Barra Velha faz com que dê para ver o nascer e o pôr do sol no mesmo lugar. Não há água nenhuma no alto: suba com tudo o que vai beber e cozinhar. O tempo vira rápido ali, mesmo em dia limpo na chegada.",
-    "confianca": "media"
-  },
-  {
-    "id": "sc-monte-crista",
-    "nome": "Monte Crista",
-    "estado": "SC",
-    "municipios": ["Garuva"],
-    "regiao": "Serra do Mar catarinense",
-    "altitude": 927,
-    "lat": -26.0583,
-    "lon": -48.9083,
-    "tipo": "morro",
-    "dificuldade": 3,
-    "trilha_km": 9,
-    "tempo_h": 5,
-    "ganho_m": 850,
-    "acampamento": "cume",
-    "agua": "percurso",
-    "acesso": "Saída da BR-101 em Garuva por estrada de terra sinalizada com um monumento de concreto, mais uns 2 km entre bananais até o estacionamento, dentro de propriedade particular. Cobra-se entrada por veículo e por pessoa. Há banheiro e um bar pequeno na recepção. A trilha começa numa ponte pênsil sobre o Rio Três Barras.",
-    "epoca": "Março a novembro",
-    "nota": "A montanha mais procurada da região de Joinville. A subida é pelo Caminho dos Ambrósios, remanescente do Peabiru, com trechos de escadaria de pedra ainda em pé. Não é técnica: é resistência, subida íngreme e constante. Atenção ao ponto de acampar: o melhor lugar não é o cume, é um marco um pouco abaixo, protegido do vento. Quem arma no topo passa a noite levando pancada. A temperatura despenca depois do escurecer, leve saco de dormir de verdade. Há pontos de água na trilha, incluindo cachoeiras.",
-    "confianca": "media"
-  }
-]
 };
