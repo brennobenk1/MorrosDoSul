@@ -14,14 +14,27 @@ import pathlib
 
 raiz = pathlib.Path(__file__).parent
 
-curado = json.loads((raiz / "dados" / "morros_sul.json").read_text(encoding="utf-8"))
+
+def achar(nome):
+    """Aceita os JSON em dados/ ou na raiz do repositório."""
+    for caminho in (raiz / "dados" / nome, raiz / nome):
+        if caminho.exists():
+            return caminho
+    return None
+
+
+arquivo_curado = achar("morros_sul.json")
+if arquivo_curado is None:
+    raise SystemExit("morros_sul.json não encontrado nem em dados/ nem na raiz")
+
+curado = json.loads(arquivo_curado.read_text(encoding="utf-8"))
 morros = curado["morros"]
 for morro in morros:
     morro["ficha"] = True
 
-arquivo_mapeados = raiz / "dados" / "mapeados_sul.json"
+arquivo_mapeados = achar("mapeados_sul.json")
 mapeados = []
-if arquivo_mapeados.exists():
+if arquivo_mapeados is not None:
     mapeados = json.loads(arquivo_mapeados.read_text(encoding="utf-8"))["mapeados"]
     for mapeado in mapeados:
         mapeado["ficha"] = False
@@ -45,5 +58,6 @@ js = "/* gerado por build.py — edite os JSON em dados/, não este arquivo */\n
 js += "window.MORROS_SUL = " + json.dumps(saida, ensure_ascii=False, indent=1) + ";\n"
 (raiz / "dados.js").write_text(js, encoding="utf-8")
 
+print(f"lido: {arquivo_curado.relative_to(raiz)}")
 print(f"dados.js gerado: {len(todos)} elevações "
       f"({len(morros)} com ficha, {len(mapeados)} mapeadas)")

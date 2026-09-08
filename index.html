@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Acima de 300 — morros do Sul para acampar</title>
-<meta name="description" content="Catálogo aberto de elevações acima de 300 metros no Paraná, Santa Catarina e Rio Grande do Sul, com informação de trilha, água e acampamento.">
+<title>Acima de 500 — morros do Sul para acampar</title>
+<meta name="description" content="Catálogo aberto de elevações acima de 500 metros no Paraná, Santa Catarina e Rio Grande do Sul, com informação de trilha, água e acampamento.">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.Default.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -535,7 +537,6 @@ select.chip option{background:var(--basalto-2);color:var(--osso)}
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/leaflet.markercluster.min.js"></script>
 <script src="dados.js"></script>
 <script>
@@ -595,7 +596,8 @@ var AGUA = {percurso:"no caminho", base:"só na base", sazonal:"sazonal", nenhum
    Abaixo disso só entra quando o usuário pede — pelo chip ou arrastando a régua. */
 var PISO_PADRAO = 500, PISO_MINIMO = 300;
 var filtro = {texto:"", ufs:[], acamp:"", grau:5, min:PISO_PADRAO, max:1950, ordem:"alt-desc", soFicha:false};
-var visiveis = [], selecionado = null, marcas = {}, mapa, camadaTopo, camadaSat;
+var visiveis = [], selecionado = null, marcas = {}, mapa, camadaTopo, camadaSat, camadaReserva;
+var ZOOM_MAX = 17, jaTrocouBase = false;
 
 var $ = function(s){ return document.querySelector(s); };
 var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
@@ -852,7 +854,7 @@ function abrir(id, rolar){
 
   var m = TODOS.filter(function(x){ return x.id === id; })[0];
   if(m && mapa){
-    mapa.flyTo([m.lat, m.lon], Math.max(mapa.getZoom(), 10), {duration:.7});
+    mapa.flyTo([m.lat, m.lon], Math.min(ZOOM_MAX, Math.max(mapa.getZoom(), 10)), {duration:.7});
     var mk = marcas[id];
     if(mk){
       if(grupoMarcas && grupoMarcas.zoomToShowLayer) grupoMarcas.zoomToShowLayer(mk, function(){ mk.openPopup(); });
@@ -873,12 +875,32 @@ function montaMapa(){
       + '<p>Mapa fora do ar.</p><span>A biblioteca de mapas não carregou. A lista abaixo continua funcionando.</span></div>';
     return;
   }
-  mapa = L.map("mapa", {zoomControl:true, scrollWheelZoom:false}).setView([-27.5,-50.5], 6);
+  mapa = L.map("mapa", {zoomControl:true, scrollWheelZoom:false, maxZoom:ZOOM_MAX})
+           .setView([-27.5,-50.5], 6);
+
   camadaTopo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
-    maxZoom:16, attribution:'© OpenStreetMap · SRTM · <a href="https://opentopomap.org">OpenTopoMap</a>'
+    maxZoom:17, maxNativeZoom:16,
+    attribution:'© OpenStreetMap · SRTM · <a href="https://opentopomap.org">OpenTopoMap</a>'
   }).addTo(mapa);
+
   camadaSat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
     maxZoom:17, attribution:"Imagens © Esri"
+  });
+
+  /* O OpenTopoMap limita uso e cai com alguma frequência. Se vários tiles falharem,
+     troca sozinho para o OSM padrão em vez de deixar o mapa cinza. */
+  camadaReserva = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    maxZoom:17, attribution:'© OpenStreetMap'
+  });
+  var falhas = 0;
+  camadaTopo.on("tileerror", function(){
+    if(jaTrocouBase || ++falhas < 6) return;
+    jaTrocouBase = true;
+    mapa.removeLayer(camadaTopo);
+    camadaReserva.addTo(mapa);
+    var botao = $('[data-camada="topo"]');
+    if(botao) botao.textContent = "mapa base";
+    toast("Relevo fora do ar — usando o mapa padrão");
   });
   mapa.on("click", function(){ mapa.scrollWheelZoom.enable(); });
   mapa.on("mouseout", function(){ mapa.scrollWheelZoom.disable(); });
@@ -965,8 +987,11 @@ document.addEventListener("click", function(e){
   if((b = e.target.closest("[data-camada]"))){
     if(!mapa) return;
     var sat = b.dataset.camada === "sat";
-    mapa.removeLayer(sat ? camadaTopo : camadaSat);
-    (sat ? camadaSat : camadaTopo).addTo(mapa);
+    [camadaTopo, camadaSat, camadaReserva].forEach(function(c){
+      if(c && mapa.hasLayer(c)) mapa.removeLayer(c);
+    });
+    if(sat) camadaSat.addTo(mapa);
+    else (jaTrocouBase ? camadaReserva : camadaTopo).addTo(mapa);
     $$("[data-camada]").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true":"false"); });
     return;
   }
